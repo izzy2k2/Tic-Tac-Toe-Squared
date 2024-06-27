@@ -5,6 +5,8 @@
     flex-wrap: wrap;
 }
 
+/* need to do something to highlight the available squares and dim the unavailable squares
+*/
 .subGame{
     width: 32.5vw;
     height: 32.5vw;
