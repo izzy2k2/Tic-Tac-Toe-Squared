@@ -1,0 +1,20 @@
+.board{
+    width: 99vw;
+    height: 99vw;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.subGame{
+    width: 32.5vw;
+    height: 32.5vw;
+    border: solid black 0.3125vw;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.box{
+    width: 10.62vw;
+    height: 10.62vw;
+    border: solid black 0.2vw;
+}
