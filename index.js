@@ -1,4 +1,6 @@
 const ARRAYSIZE = 3;
+const subGames = document.querySelectorAll('.subGame')
+const boxes = document.querySelectorAll(".box")
 
 // Initializer for small tic tac toes.
 function makeToeSquare(){
