@@ -94,8 +94,8 @@ function isCat(arrayToCheck){
 }
 
 // Actual game controller, may move to another file for length purposes.
-// Should work for any 2 player games, until one box is full and someone gets sent there, it doesn't know how to handle that
-function runTwoGame(){
+// Should work for any 2 player games, until one box is full and someone gets sent there, it doesn't know how to handle that yet
+function runGame(playerCount = 2){
     let topLeft = makeToeSquare();
     let topMid = makeToeSquare();
     let topRight = makeToeSquare();
@@ -219,6 +219,12 @@ function runTwoGame(){
         // swap between X and O, can comment out... use if(== X) for AI
         if(currPlayer == 'O'){
             currPlayer = 'X';
+            if(playerCount !=2){
+                // do AI turn
+            }
+            else{
+                // Other player gets a turn
+            }
         }
         else{
             currPlayer = 'O';
