@@ -1,4 +1,9 @@
+*{
+    text-align: center;
+}
+
 .board{
+    margin: auto;
     aspect-ratio: 1/1;
     max-height: 95vw;
     max-width: 95vh;
@@ -11,6 +16,7 @@
 /* need to do something to highlight the available squares and dim the unavailable squares
 */
 .subGame{
+    background-color:rgb(255, 196, 246);
     aspect-ratio: 1/1;
     box-sizing: border-box;
     width: 33%;
