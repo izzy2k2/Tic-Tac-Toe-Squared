@@ -1,5 +1,7 @@
 .board{
     aspect-ratio: 1/1;
+    max-height: 95vw;
+    max-width: 95vh;
     width: 100%;
     display: flex;
     flex-wrap: wrap;
