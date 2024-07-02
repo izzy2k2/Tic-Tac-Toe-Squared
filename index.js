@@ -2,6 +2,15 @@ const ARRAYSIZE = 3;
 const subGames = document.querySelectorAll('.subGame')
 const boxes = document.querySelectorAll(".box")
 
+const buttons = document.getElementsByTagName("button");
+const buttonPressed = e => {
+    console.log(e.target.id);
+}
+for(let button of buttons){
+    button.addEventListener("click", buttonPressed);
+}
+// need to see if this will give the subGame items or box items
+
 // Initializer for small tic tac toes.
 function makeToeSquare(){
     let rowCol = [[],[],[]]
@@ -92,6 +101,8 @@ function isCat(arrayToCheck){
         return false;
     }
 }
+
+
 
 // Actual game controller, may move to another file for length purposes.
 // Should work for any 2 player games, until one box is full and someone gets sent there, it doesn't know how to handle that yet

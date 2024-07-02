@@ -16,7 +16,7 @@
 /* need to do something to highlight the available squares and dim the unavailable squares
 */
 .subGame{
-    background-color:rgb(255, 196, 246);
+    background-color: blanchedalmond;
     aspect-ratio: 1/1;
     box-sizing: border-box;
     width: 33%;
@@ -30,4 +30,23 @@
     box-sizing: border-box;
     width: 33.333%;
     border: solid black 0.1vw;
+}
+
+.unavailable{
+    background-color:rgb(255, 196, 246);
+}
+
+.x{
+    background-color: url(X.png);
+    background-size: cover;
+}
+
+.o{
+    background-color: url(O.png);
+    background-size: cover;
+}
+
+.c{
+    background-color: url(C.png);
+    background-size: cover;
 }
