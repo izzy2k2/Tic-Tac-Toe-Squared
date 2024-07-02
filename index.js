@@ -2,14 +2,23 @@ const ARRAYSIZE = 3;
 const subGames = document.querySelectorAll('.subGame')
 const boxes = document.querySelectorAll(".box")
 
-const buttons = document.getElementsByTagName("button");
+// setting an eventlistener on each box
+const buttons = document.getElementsByTagName("box");
 const buttonPressed = e => {
     console.log(e.target.id);
 }
 for(let button of buttons){
     button.addEventListener("click", buttonPressed);
 }
-// need to see if this will give the subGame items or box items
+
+var lastClicked = "";
+
+// temp function for testing, gives clicked id
+function gotClick(clicked_id){
+    lastClicked = clicked_id;
+    alert(clicked_id);
+}
+
 
 // Initializer for small tic tac toes.
 function makeToeSquare(){
@@ -137,6 +146,7 @@ function runGame(playerCount = 2){
 
     while(!gameWin && userPos != 9){
         userPos = 9;
+
         // sets currBox correctly for the next action
         switch(currBoxNo){
             case 0:
@@ -196,22 +206,26 @@ function runGame(playerCount = 2){
 
             // row check
             if(completed[a] == completed[a + 1] == completed[a + 2]){
-                return completed[a];
+                alert(completed[a] + " has won!");
+                return;
             }
 
             // column check
             if(completed[b] == completed[b + 3] == completed[b + 6]){
-                return completed[b];
+                alert(completed[b] + " has won!");
+                return;
             }
 
             // diagonals
             if(currBox % 2 == 0){
                 // top left to bottom right
                 if(currBox % 4 == 0 && (completed[0] == completed[4] == completed[8])){
-                    return completed[0];
+                    alert(completed[0] + " has won!");
+                    return;
                 }
                 if(completed[2] == completed [4] == completed [6]){
-                    return completed[2];
+                    alert(completed[2] + " has won!");
+                    return;
                 }
             }
         }
@@ -223,22 +237,22 @@ function runGame(playerCount = 2){
                 completion = completed[i] != '0';
             }
             if(completion){
-                return 'C';
+                alert("Cat's game!");
+                return;
             }
         }
         currBoxNo = userPos;
+
         // swap between X and O, can comment out... use if(== X) for AI
         if(currPlayer == 'O'){
             currPlayer = 'X';
-            if(playerCount !=2){
-                // do AI turn
-            }
-            else{
-                // Other player gets a turn
-            }
         }
         else{
             currPlayer = 'O';
+        }
+
+        if(playerCount !=2){
+            // do AI turn, else other player's turn
         }
     }
 };
