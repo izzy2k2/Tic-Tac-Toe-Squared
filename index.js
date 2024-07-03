@@ -2,6 +2,9 @@ const ARRAYSIZE = 3;
 const subGames = document.querySelectorAll('.subGame')
 const boxes = document.querySelectorAll(".box")
 
+const startPauseButton = document.querySelector("#start-end-button")
+var gameRunning = true;
+
 // setting an eventlistener on each box
 const buttons = document.getElementsByTagName("box");
 const buttonPressed = e => {
@@ -12,6 +15,10 @@ for(let button of buttons){
 }
 
 var lastClicked = "";
+
+startPauseButton.addEventListener('click', () => 
+    {gameRunning = !gameRunning}
+);
 
 // temp function for testing, gives clicked id
 function gotClick(clicked_id){
