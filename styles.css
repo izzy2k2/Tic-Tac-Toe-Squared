@@ -38,6 +38,19 @@
     cursor: disabled;
 }
 
+.notHere{
+    background-color: #c9bb9d;
+    pointer-events: none;
+    cursor: disabled;
+}
+
+/* unavailable is for subGames, unavailableBox is for the rest
+*/
+.unavailableBox{
+    pointer-events: none;
+    cursor: disabled;
+}
+
 .x{
     background-image: url(X.png);
     background-size: cover;

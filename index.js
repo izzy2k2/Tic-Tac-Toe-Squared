@@ -5,7 +5,7 @@ const startPauseButton = document.querySelector("#start-end-button")
 var gameRunning = true;
 
 let overAllArray = []
-// Turning subGames into a 2d array
+// Turning subGames into a 2d array- overAllArray[x] is the set of boxes at subGames[x]
 overAllArray[0] = document.querySelectorAll("[id^='0-']")
 overAllArray[1] = document.querySelectorAll("[id^='1-']")
 overAllArray[2] = document.querySelectorAll("[id^='2-']")
@@ -16,19 +16,32 @@ overAllArray[6] = document.querySelectorAll("[id^='6-']")
 overAllArray[7] = document.querySelectorAll("[id^='7-']")
 overAllArray[8] = document.querySelectorAll("[id^='8-']")
 
+// Reset a sub-game in the case of a tic tac toe win/cat game or reset 
+function resetSubGame(boxToReset){
+    for(i = 0; i < 9; i++){
+            overAllArray[boxToReset][i].classList.remove('x', 'o', 'c', 'unavailable')
+    }
+}
 
 // Resets the game, resetting both boxes and subGames by removing their extra tags
 function resetGame(){
-    subGames.forEach(game =>{
-        for(i = 0; i < 9; i++){
-            game[i].classList.remove('x', 'o', 'c', 'unavailable')
-        }},
-        game.classList.remove('x', 'o', 'c', 'unavailable')
+    subGames.forEach(game =>
+        game.classList.remove('x', 'o', 'c', 'unavailableBox')
     )
+
+    // only doing this because this version of the game is locked in size
+    for(j = 0; j<9; j++){    
+        resetSubGame(j);
+    }
 }
 
-startPauseButton.addEventListener('click', () => 
-    {gameRunning = !gameRunning}
+startPauseButton.addEventListener('click', () => {
+        gameRunning = !gameRunning
+        if(gameRunning){
+            alert("Let's start playing! You're Os")
+            runGame();
+        }
+    }
 );
 
 // temp function for testing, gives clicked id
@@ -37,33 +50,21 @@ function gotClick(clicked_id){
     alert(clicked_id);
 }
 
-
-// Initializer for small tic tac toes.
-function makeToeSquare(){
-    let rowCol = [[],[],[]]
-    for( i = 0; i < ARRAYSIZE; i++){
-        for(j=0; j < ARRAYSIZE; j++){
-            rowCol[i][j]=0;
-        }
-    }
-    return rowCol;
-};
-
 // Checks if the box has come out as a win, or if it has become a cat's game
 // inArray is the array being checked, newThing is the newest play from 0-8
 function checkWin(inArray, newThing){
     // a is row, b is col
     let a = newThing % ARRAYSIZE;
     let b = newThing - (a * ARRAYSIZE);
-
+    let wins = false;
     //check row
     if(inArray[a][0] == inArray[a][1] == inArray[a][2]){
-        return true;
+        wins = true;
     }
 
     //check col
     if(inArray[0][b] == inArray[1][b] == inArray[2][b]){
-        return true;
+        wins = true;
     }
 
         // Means it's on diagonal
@@ -71,14 +72,14 @@ function checkWin(inArray, newThing){
 
             // top left to bottom right diagonal, checked in the second part
         if(newThing % 4 == 0 && (inArray[0][0] == inArray[1][1] == inArray[2][2])){
-            return true;
+            wins = true;
         }
             // other diagonal, checked in the second part
         if((newThing == 2 || newThing == 4 || newThing == 6) && (inArray[0][2] == inArray[1][1] == inArray[2][0])){
-            return true;
+            wins = true;
         }
     }
-    return false;
+    return wins;
 };
 
 // Delegating placement of X and O
@@ -89,6 +90,7 @@ function placeIt(arrayIn, pos, character){
 };
 
 // Seeing if a spot is occupied in the array
+// Will see if this is superfluous
 function isOccupied(arrayCheck, pos){
     let a = pos % ARRAYSIZE;
     let b = pos - (a * ARRAYSIZE);
@@ -98,16 +100,9 @@ function isOccupied(arrayCheck, pos){
     return true;
 }
 
-// Seeing if a box the player would be sent to is full
+// Seeing if a box the player would select or be sent to is full
 function isFull(arrayToCheck){
-    for(i = 0; i < ARRAYSIZE; i++){
-        for(j = 0; j < ARRAYSIZE; j++){
-            if(arrayToCheck[i][j] == 0){
-                return false;
-            }
-        }
-    }
-    return true;
+    return subGames[arrayToCheck].classList.contains('o', 'x', 'c')
 }
 
 // To see if the array has become a cat's game
@@ -133,15 +128,7 @@ function isCat(arrayToCheck){
 // Should work for any 2 player games, until one box is full and someone gets sent there, it doesn't know how to handle that yet
 // Resets the game after the game is over, before ending
 function runGame(playerCount = 2){
-    let topLeft = makeToeSquare();
-    let topMid = makeToeSquare();
-    let topRight = makeToeSquare();
-    let midLeft = makeToeSquare();
-    let trueMid = makeToeSquare();
-    let midRight = makeToeSquare();
-    let botLeft = makeToeSquare();
-    let botMid = makeToeSquare();
-    let botRight = makeToeSquare();
+    // square is whatever subGames section it's placed in
 
     let completed = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
 
@@ -151,57 +138,14 @@ function runGame(playerCount = 2){
     // If the user doesn't give a number, will try again
     let currBoxNo = 9;
     let gameWin = null;
-    let currBox = topLeft;
     
-    // initializing to the chosen box
-    while(currBoxNo > 8 || currBoxNo < 0){
-        currBoxNo = prompt("Which box to start with? 0-8 only");
-    }
-
-    let userPos = 0;
     let currPlayer = 'O';
 
     while(!gameWin && gameRunning){
-        userPos = 9;
-
-        // sets currBox correctly for the next action
-        switch(currBoxNo){
-            case 0:
-                currBox = topLeft;
-                break;
-            case 1:
-                currBox = topMid;
-                break;
-            case 2:
-                currBox = topRight;
-                break;
-            case 3:
-                currBox = midLeft;
-                break;
-            case 4:
-                currBox = trueMid;
-                break;
-            case 5:
-                currBox = midRight;
-                break;
-            case 6:
-                currBox = botLeft;
-                break;
-            case 7:
-                currBox = botMid;
-                break;
-            case 8:
-                currBox = botRight;
-                break;
-        }
-
         // making sure play is viable, then placing it, then checking it.
         let unoccupied = false;
         while(unoccupied){
             userPos = prompt("Your next play? 0-8, 9 exits.");
-            if(!gameRunning){
-                break;
-            }
             unoccupied = isOccupied(currBox, userPos);
         }
         placeIt(currBox, userPos, currPlayer);
@@ -209,6 +153,7 @@ function runGame(playerCount = 2){
 
         // place it on the 'completed' list if the box is completed, either as a win to one of the players or not
         if(isWin){
+            resetSubGame(currBoxNo);
             completed[currBoxNo] = currPlayer;
         }
         if(!isWin && isCat(currBox)){
@@ -255,7 +200,7 @@ function runGame(playerCount = 2){
             }
             if(completion){
                 alert("Cat's game!");
-                return;
+                gameRunning = false;
             }
         }
         currBoxNo = userPos;
@@ -268,11 +213,16 @@ function runGame(playerCount = 2){
             currPlayer = 'O';
         }
 
-        if(playerCount !=2){
+        if(playerCount !=2 && gameRunning){
             // do AI turn, else other player's turn
         }
     }
 
     //reset game once the game has been ended
     resetGame();
+};
+
+// The intelligence for the AI's turn
+function aiTurn(){
+
 };
