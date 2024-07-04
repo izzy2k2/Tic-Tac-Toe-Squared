@@ -4,29 +4,26 @@ const subGames = document.querySelectorAll('.subGame')
 const startPauseButton = document.querySelector("#start-end-button")
 var gameRunning = true;
 
+let overAllArray = []
 // Turning subGames into a 2d array
-subGames[0] = document.querySelectorAll("[id^='0-']")
-subGames[1] = document.querySelectorAll("[id^='1-']")
-subGames[2] = document.querySelectorAll("[id^='2-']")
-subGames[3] = document.querySelectorAll("[id^='3-']")
-subGames[4] = document.querySelectorAll("[id^='4-']")
-subGames[5] = document.querySelectorAll("[id^='5-']")
-subGames[6] = document.querySelectorAll("[id^='6-']")
-subGames[7] = document.querySelectorAll("[id^='7-']")
-subGames[8] = document.querySelectorAll("[id^='8-']")
+overAllArray[0] = document.querySelectorAll("[id^='0-']")
+overAllArray[1] = document.querySelectorAll("[id^='1-']")
+overAllArray[2] = document.querySelectorAll("[id^='2-']")
+overAllArray[3] = document.querySelectorAll("[id^='3-']")
+overAllArray[4] = document.querySelectorAll("[id^='4-']")
+overAllArray[5] = document.querySelectorAll("[id^='5-']")
+overAllArray[6] = document.querySelectorAll("[id^='6-']")
+overAllArray[7] = document.querySelectorAll("[id^='7-']")
+overAllArray[8] = document.querySelectorAll("[id^='8-']")
 
 
 // Resets the game, resetting both boxes and subGames by removing their extra tags
 function resetGame(){
-    boxes.forEach(box => 
-        box.classList.remove('x'),
-        box.classList.remove('o')
-    )
-    subGames.forEach(game =>
-        game.classList.remove('x'),
-        game.classList.remove('o'),
-        game.classList.remove('c'),
-        game.classList.remove('unavailable')
+    subGames.forEach(game =>{
+        for(i = 0; i < 9; i++){
+            game[i].classList.remove('x', 'o', 'c', 'unavailable')
+        }},
+        game.classList.remove('x', 'o', 'c', 'unavailable')
     )
 }
 
