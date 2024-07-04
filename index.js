@@ -48,7 +48,8 @@ for(i = 0; i < 9; i++){
             // get which subGame it's in
             let chosenGame = box.id.substring(0,1)
             
-            let isTaken = box.classList.contains('o', 'x', 'c') || subGames[chosenGame].classList.contains('o', 'x', 'c')
+            // if the position has been claimed or not, as well as if the subGame has been won or is otherwise unavailable
+            let isTaken = singleContainsOr(box, ['o', 'x', 'c']) || singleContainsOr(subGames[chosenGame], ['o', 'x', 'c', 'notHere']);
             if(gameRunning && !isTaken){
                 //is available
                 box.classList.add(currPlayer, 'unavailableBox');
@@ -79,14 +80,14 @@ function tradePlayer(){
 // Reset a sub-game in the case of a tic tac toe win/cat game or reset 
 function resetSubGame(boxToReset){
     for(i = 0; i < 9; i++){
-            overAllArray[boxToReset][i].classList.remove('x', 'o', 'c', 'unavailable')
+            overAllArray[boxToReset][i].classList.remove('x', 'o', 'c', 'unavailableBox')
     }
 }
 
 // Resets the game, resetting both boxes and subGames by removing their extra tags
 function resetGame(){
     subGames.forEach(game =>
-        game.classList.remove('x', 'o', 'c', 'unavailableBox')
+        game.classList.remove('x', 'o', 'c', 'unavailable', 'notHere')
     )
 
     // only doing this because this version of the game is locked in size
@@ -98,7 +99,7 @@ function resetGame(){
 // gives here/notHere functionality
 function selectSub(clicked_box_pos){
 
-    if(!subGames[clicked_box_pos].classList.contains('x', 'o', 'c')){
+    if(!singleContainsOr(subGames[clicked_box_pos], ['x', 'o', 'c'])){
         subGames.forEach(game =>
             game.classList.add('notHere')
         )        
@@ -151,21 +152,12 @@ function checkWin(inArray, newThing){
 
 // To see if the array has become a cat's game
 function isCat(arrayToCheck){
-    if(!isFull(arrayToCheck)){
-        return false;
+    var done = true;
+    for(i = 0; done && i < 9; i++){
+        // if it hits a position that hasn't been filled, the game isn't done
+        done = arrayContainsOr(arrayToCheck[i], ['o', 'x', 'c']);
     }
-    if(checkWin(arrayToCheck, 0)){
-        return false;
-    }
-    else if(checkWin(arrayToCheck, 2)){
-        return false;
-    }
-    else if(checkWin(arrayToCheck, 5)){
-        return false;
-    }
-    else if(checkWin(arrayToCheck, 7)){
-        return false;
-    }
+    return done;
 }
 
 
@@ -279,10 +271,49 @@ function aiTurn(){
 // calls to check for win or cat in subGame, if won calls to check for win
 function endTurn(currSubGame, positionIn){
     // check to see if the subGame is won
-    if(checkWin(overAllArray[currSubGame], positionIn)){
+    var checkIsWin = checkWin(overAllArray[currSubGame], positionIn)
+    var isACat = isCat(subGames)
+    if(checkIsWin){
+        subGames[currSubGame].classList.add(currPlayer)
+    }
+    else if(isACat){
+        subGames[currSubGame].classList.add('c')
+    }
+    if(checkIsWin || isACat){
+        resetSubGame(currSubGame);
+        subGames[currSubGame].classList.add('unavailable')
+
         // subGame has been won, is the full game won?
+        if(checkWin(subGames, currSubGame)){
+            // game is won
+        }
+        else if(isCat(subGames)){
+            // game is cat
+        }
     }
 
-    // goes at the end of every turn, so it's better here
+    // go at the end of every turn to set up next turn, so it's better here
+    if(gameRunning){
+        selectSub(currSubGame);
+    }
     tradePlayer();
-}
+};
+
+// Array contains a class check for multiple values
+function arrayContainsOr(arrayToCheck, valuesArray){
+    doesContain = false;
+    for(i = 0; !doesContain && i < arrayToCheck.length; i++){
+        for(j = 0; !doesContain && j < valuesArray.length; j++){
+            doesContain = arrayToCheck[i].classList.contains(valuesArray[j])
+        }
+    }
+};
+
+// Single item contains from array
+function singleContainsOr(itemToCheck, valuesArray){
+    var itContains = false;
+    for(i = 0; !itContains && i < valuesArray.length; i++){
+        itContains = itemToCheck.classList.contains(valuesArray[i])
+    }
+    return itContains;
+};

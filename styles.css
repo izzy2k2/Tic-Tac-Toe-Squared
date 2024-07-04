@@ -37,7 +37,7 @@ label[for=playerCount]{
     flex-wrap: wrap;
 }
 
-/* notHere comes before unavailable so unavailable has priority
+/* notHere comes before unavailable so unavailable has priority; the more temporary of the 2
 */
 .notHere{
     background-color: #c9bb9d;
