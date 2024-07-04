@@ -5,7 +5,7 @@ const startPauseButton = document.querySelector("#start-end-button")
 var gameRunning = false;
 var userCount = document.querySelector("label[for=playerCount]");
 var playerCount = 1;
-var currPlayer = 'O';
+var currPlayer = 'o';
 
 let overAllArray = []
 // Turning subGames into a 2d array- overAllArray[x] is the set of boxes at subGames[x]
@@ -19,20 +19,57 @@ overAllArray[6] = document.querySelectorAll("[id^='6-']")
 overAllArray[7] = document.querySelectorAll("[id^='7-']")
 overAllArray[8] = document.querySelectorAll("[id^='8-']")
 
-// adding event listeners to each box
-overAllArray.forEach(box =>
-    box.addEventListener('click', () => {
-        // when clicked, if it doesn't have a selection or its subGame isn't won, and the game is in play, make one, if not don't
-        
-        // get which subGame it's in
-        let chosenGame = box.id.substring(0,1)
-        
-        if(gameRunning && !(box.classList.contains('o', 'x', 'c') || subGames[chosenGame].classList.contains('o', 'x', 'c'))){
-            //is available
-            box.classList.add(currPlayer);
+// Entirely functional start/end button
+startPauseButton.addEventListener('click', () => {
+        gameRunning = !gameRunning;
+        playerCount = userCount;
+        // if it's just been set to true, start game; if newly yset to false, reset
+        if(gameRunning){
+            if(playerCount == 1){
+                alert("Let's start playing! You're Os");
+            }
+            else{
+                alert("Let's start playing! Os start.");
+            }
         }
-    })
-)
+        else{
+            resetGame();
+        }
+    }
+);
+
+// adding event listeners to each box, ensuring the chosen box has functionality
+for(i = 0; i < 9; i++){
+    overAllArray[i].forEach(box =>
+        box.addEventListener('click', () => {
+            // when clicked, if it doesn't have a selection or its subGame isn't won, and the game is in play, make one, if not don't
+            
+            // get which subGame it's in
+            let chosenGame = box.id.substring(0,1)
+            
+            let isTaken = box.classList.contains('o', 'x', 'c') || subGames[chosenGame].classList.contains('o', 'x', 'c')
+            if(gameRunning && !isTaken){
+                //is available
+                box.classList.add(currPlayer, 'unavailableBox');
+
+                // player swapping and AI turn
+                tradePlayer();
+                if(playerCount == 1){
+                    aiTurn();
+                }         
+            }
+        })
+    )
+}
+
+function tradePlayer(){
+    if(currPlayer == 'o'){
+        currPlayer = 'x'
+    }
+    else{
+        currPlayer = 'o'
+    }   
+}
 
 // Reset a sub-game in the case of a tic tac toe win/cat game or reset 
 function resetSubGame(boxToReset){
@@ -52,25 +89,6 @@ function resetGame(){
         resetSubGame(j);
     }
 }
-
-// Entirely functional start button
-startPauseButton.addEventListener('click', () => {
-        gameRunning = !gameRunning;
-        playerCount = userCount;
-        // if it's just been set to true, start game; if newly yset to false, reset
-        if(gameRunning){
-            if(playerCount == 1){
-                alert("Let's start playing! You're Os");
-            }
-            else{
-                alert("Let's start playing! Os start.");
-            }
-        }
-        else{
-            resetGame();
-        }
-    }
-);
 
 // temp function for testing, gives clicked id
 function madeSelection(clicked_box_pos){
