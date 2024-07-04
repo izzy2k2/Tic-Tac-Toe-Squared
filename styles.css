@@ -20,6 +20,11 @@
     border: solid black 0.1vw;
 }
 
+label[for=playerCount]{
+    border-radius: 10%;
+    background-color: rgb(220, 184, 255);
+}
+
 /* need to do something to highlight the available squares and dim the unavailable squares
 */
 .subGame{

@@ -2,7 +2,8 @@ const ARRAYSIZE = 3;
 const subGames = document.querySelectorAll('.subGame')
 
 const startPauseButton = document.querySelector("#start-end-button")
-var gameRunning = true;
+var gameRunning = false;
+var playerCount = 1;
 
 let overAllArray = []
 // Turning subGames into a 2d array- overAllArray[x] is the set of boxes at subGames[x]
@@ -35,11 +36,16 @@ function resetGame(){
     }
 }
 
+// Entirely functional start button
 startPauseButton.addEventListener('click', () => {
         gameRunning = !gameRunning
+
+        // if it's just been set to true, start game; if newly yset to false, reset
         if(gameRunning){
             alert("Let's start playing! You're Os")
-            runGame();
+        }
+        else{
+            resetGame();
         }
     }
 );
@@ -125,11 +131,14 @@ function isCat(arrayToCheck){
 }
 
 
+// Completely defunct, good for remembering how it goes, not good for actual play in js
+
 // Should work for any 2 player games, until one box is full and someone gets sent there, it doesn't know how to handle that yet
 // Resets the game after the game is over, before ending
 function runGame(playerCount = 2){
     // square is whatever subGames section it's placed in
 
+    // Don't really need completed here
     let completed = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
 
     console.log("You are the Os");
