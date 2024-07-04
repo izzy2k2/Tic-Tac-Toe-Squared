@@ -1,4 +1,4 @@
-const ARRAYSIZE = 3;
+const ARRAYROWSIZE = 3;
 const subGames = document.querySelectorAll('.subGame')
 
 const startPauseButton = document.querySelector("#start-end-button")
@@ -6,6 +6,7 @@ var gameRunning = false;
 var userCount = document.querySelector("label[for=playerCount]");
 var playerCount = 1;
 var currPlayer = 'o';
+var currBox = 9;
 
 let overAllArray = []
 // Turning subGames into a 2d array- overAllArray[x] is the set of boxes at subGames[x]
@@ -52,9 +53,12 @@ for(i = 0; i < 9; i++){
                 //is available
                 box.classList.add(currPlayer, 'unavailableBox');
 
-                // player swapping and AI turn
-                tradePlayer();
-                if(playerCount == 1){
+                // get rest of the box position in overAllArray
+                let chosenBox = box.id.substring(2,3)
+                endTurn(chosenGame, chosenBox);
+
+                // AI turn if the game isn't won
+                if(gameRunning && playerCount == 1){
                     aiTurn();
                 }         
             }
@@ -62,6 +66,7 @@ for(i = 0; i < 9; i++){
     )
 }
 
+// Self explanatory
 function tradePlayer(){
     if(currPlayer == 'o'){
         currPlayer = 'x'
@@ -90,8 +95,8 @@ function resetGame(){
     }
 }
 
-// temp function for testing, gives clicked id
-function madeSelection(clicked_box_pos){
+// gives here/notHere functionality
+function selectSub(clicked_box_pos){
 
     if(!subGames[clicked_box_pos].classList.contains('x', 'o', 'c')){
         subGames.forEach(game =>
@@ -99,63 +104,50 @@ function madeSelection(clicked_box_pos){
         )        
         // can select only the one directed to, if the one directed to is allowed
         subGames[clicked_box_pos].classList.remove('notHere')
+        currBox = clicked_box_pos;
+    }
+    else{
+        // makes sure notHere isn't in any of the subGames since the player can choose any of them
+        subGames.forEach(game =>
+            game.classList.remove('notHere')
+        )        
     }
 }
+
+
 
 // Checks if the box has come out as a win, or if it has become a cat's game
 // inArray is the array being checked, newThing is the newest play from 0-8
 function checkWin(inArray, newThing){
     // a is row, b is col
-    let a = newThing % ARRAYSIZE;
-    let b = newThing - (a * ARRAYSIZE);
+    let a = newThing % ARRAYROWSIZE;
+    let b = newThing - (a * ARRAYROWSIZE);
     let wins = false;
-    //check row
+
+    // check row
     if(inArray[a][0] == inArray[a][1] == inArray[a][2]){
         wins = true;
     }
 
     //check col
-    if(inArray[0][b] == inArray[1][b] == inArray[2][b]){
+    if(!wins && (inArray[0][b] == inArray[1][b] == inArray[2][b])){
         wins = true;
     }
 
         // Means it's on diagonal
-    if(newThing % 2 == 0){
+    if(!wins && newThing % 2 == 0){
 
             // top left to bottom right diagonal, checked in the second part
         if(newThing % 4 == 0 && (inArray[0][0] == inArray[1][1] == inArray[2][2])){
             wins = true;
         }
             // other diagonal, checked in the second part
-        if((newThing == 2 || newThing == 4 || newThing == 6) && (inArray[0][2] == inArray[1][1] == inArray[2][0])){
+        if(!wins && (newThing == 2 || newThing == 4 || newThing == 6) && (inArray[0][2] == inArray[1][1] == inArray[2][0])){
             wins = true;
         }
     }
     return wins;
 };
-
-// Delegating placement of X and O
-function placeIt(arrayIn, pos, character){
-    let a = pos % ARRAYSIZE;
-    let b = pos - (a * ARRAYSIZE);
-    arrayIn[a][b] = character;
-};
-
-// Seeing if a spot is occupied in the array
-// Will see if this is superfluous
-function isOccupied(arrayCheck, pos){
-    let a = pos % ARRAYSIZE;
-    let b = pos - (a * ARRAYSIZE);
-    if(arrayCheck[a][b] == 0){
-        return false;
-    }
-    return true;
-}
-
-// Seeing if a box the player would select or be sent to is full
-function isFull(arrayToCheck){
-    return subGames[arrayToCheck].classList.contains('o', 'x', 'c')
-}
 
 // To see if the array has become a cat's game
 function isCat(arrayToCheck){
@@ -218,8 +210,8 @@ function runGame(playerCount = 2){
         // will return char if someone won the game
         if(isWin){
             // time to check the big boxes to see about complete fill
-            let a = currBox % ARRAYSIZE;
-            let b = currBox - (a * ARRAYSIZE);
+            let a = currBox % ARRAYROWSIZE;
+            let b = currBox - (a * ARRAYROWSIZE);
 
             // row check
             if(completed[a] == completed[a + 1] == completed[a + 2]){
@@ -280,4 +272,17 @@ function runGame(playerCount = 2){
 // The intelligence for the AI's turn
 function aiTurn(){
 
+    // end by ending turn
+    endTurn()
 };
+
+// calls to check for win or cat in subGame, if won calls to check for win
+function endTurn(currSubGame, positionIn){
+    // check to see if the subGame is won
+    if(checkWin(overAllArray[currSubGame], positionIn)){
+        // subGame has been won, is the full game won?
+    }
+
+    // goes at the end of every turn, so it's better here
+    tradePlayer();
+}

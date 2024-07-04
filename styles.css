@@ -37,14 +37,16 @@ label[for=playerCount]{
     flex-wrap: wrap;
 }
 
-.unavailable{
-    background-color:rgb(255, 196, 246);
+/* notHere comes before unavailable so unavailable has priority
+*/
+.notHere{
+    background-color: #c9bb9d;
     pointer-events: none;
     cursor: disabled;
 }
 
-.notHere{
-    background-color: #c9bb9d;
+.unavailable{
+    background-color:rgb(255, 196, 246);
     pointer-events: none;
     cursor: disabled;
 }
