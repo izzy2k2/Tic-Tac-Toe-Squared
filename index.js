@@ -1,20 +1,34 @@
 const ARRAYSIZE = 3;
 const subGames = document.querySelectorAll('.subGame')
-const boxes = document.querySelectorAll(".box")
 
 const startPauseButton = document.querySelector("#start-end-button")
 var gameRunning = true;
 
-// setting an eventlistener on each box
-const buttons = document.getElementsByTagName("box");
-const buttonPressed = e => {
-    console.log(e.target.id);
-}
-for(let button of buttons){
-    button.addEventListener("click", buttonPressed);
-}
+// Turning subGames into a 2d array
+subGames[0] = document.querySelectorAll("[id^='0-']")
+subGames[1] = document.querySelectorAll("[id^='1-']")
+subGames[2] = document.querySelectorAll("[id^='2-']")
+subGames[3] = document.querySelectorAll("[id^='3-']")
+subGames[4] = document.querySelectorAll("[id^='4-']")
+subGames[5] = document.querySelectorAll("[id^='5-']")
+subGames[6] = document.querySelectorAll("[id^='6-']")
+subGames[7] = document.querySelectorAll("[id^='7-']")
+subGames[8] = document.querySelectorAll("[id^='8-']")
 
-var lastClicked = "";
+
+// Resets the game, resetting both boxes and subGames by removing their extra tags
+function resetGame(){
+    boxes.forEach(box => 
+        box.classList.remove('x'),
+        box.classList.remove('o')
+    )
+    subGames.forEach(game =>
+        game.classList.remove('x'),
+        game.classList.remove('o'),
+        game.classList.remove('c'),
+        game.classList.remove('unavailable')
+    )
+}
 
 startPauseButton.addEventListener('click', () => 
     {gameRunning = !gameRunning}
@@ -119,9 +133,8 @@ function isCat(arrayToCheck){
 }
 
 
-
-// Actual game controller, may move to another file for length purposes.
 // Should work for any 2 player games, until one box is full and someone gets sent there, it doesn't know how to handle that yet
+// Resets the game after the game is over, before ending
 function runGame(playerCount = 2){
     let topLeft = makeToeSquare();
     let topMid = makeToeSquare();
@@ -151,7 +164,7 @@ function runGame(playerCount = 2){
     let userPos = 0;
     let currPlayer = 'O';
 
-    while(!gameWin && userPos != 9){
+    while(!gameWin && gameRunning){
         userPos = 9;
 
         // sets currBox correctly for the next action
@@ -189,7 +202,7 @@ function runGame(playerCount = 2){
         let unoccupied = false;
         while(unoccupied){
             userPos = prompt("Your next play? 0-8, 9 exits.");
-            if(userPos == 9){
+            if(!gameRunning){
                 break;
             }
             unoccupied = isOccupied(currBox, userPos);
@@ -262,4 +275,7 @@ function runGame(playerCount = 2){
             // do AI turn, else other player's turn
         }
     }
+
+    //reset game once the game has been ended
+    resetGame();
 };
