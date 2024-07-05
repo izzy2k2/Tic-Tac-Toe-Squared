@@ -54,8 +54,8 @@ for(i = 0; i < 9; i++){
                 //is available
                 box.classList.add(currPlayer, 'unavailableBox');
 
-                // get rest of the box position in overAllArray
-                let chosenBox = box.id.substring(2,3)
+                // get rest of the box position in overAllArray, definitely accurate
+                let chosenBox = parseInt(box.id.substring(2,3));
                 endTurn(chosenGame, chosenBox);
 
                 // AI turn if the game isn't won
@@ -67,7 +67,7 @@ for(i = 0; i < 9; i++){
     )
 }
 
-// Self explanatory
+// Self explanatory, swaps whose turn it is
 function tradePlayer(){
     if(currPlayer == 'o'){
         currPlayer = 'x'
@@ -75,6 +75,12 @@ function tradePlayer(){
     else{
         currPlayer = 'o'
     }   
+}
+
+// Handles the availability and reset of the subGame information
+function subWon(subPos){
+    resetSubGame(subPos);
+    subGames[subPos].classList.add('unavailable');
 }
 
 // Reset a sub-game in the case of a tic tac toe win/cat game or reset 
@@ -141,7 +147,7 @@ function singleContainsOr(itemToCheck, valuesArray){
 // inArray is the array being checked, newThing is the newest play in its index
 function checkWin(inArray, newThing){
     // a is row, b is col
-    let a = newThing % ARRAYROWSIZE;
+    let a = Math.floor(newThing / ARRAYROWSIZE);
     let b = newThing - (a * ARRAYROWSIZE);
     let wins = false;
 
@@ -184,8 +190,8 @@ function isCat(arrayToCheck){
 // calls to check for win or cat in subGame, if won calls to check for win
 function endTurn(currSubGame, positionIn){
     // check to see if the subGame is won
-    var checkIsWin = checkWin(overAllArray[currSubGame], positionIn)
-    var isACat = isCat(subGames)
+    var checkIsWin = checkWin(overAllArray[currSubGame], positionIn);
+    var isACat = isCat(overAllArray[currSubGame]);
 
     // if the subGame has been won, do this stuff
     if(checkIsWin || isACat){
@@ -216,16 +222,10 @@ function endTurn(currSubGame, positionIn){
 
     // This goes at the end of every turn to set up next turn, so it's better here
     if(gameRunning){
-        selectSub(currSubGame);
+        selectSub(positionIn);
     }
     tradePlayer();
 };
-
-// Handles the availability and reset of the subGame information
-function subWon(subPos){
-    resetSubGame(subPos);
-    subGames[subPos].classList.add('unavailable');
-}
 
 // The intelligence for the AI's turn
 function aiTurn(){
