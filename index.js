@@ -49,7 +49,7 @@ for(i = 0; i < 9; i++){
             let chosenGame = box.id.substring(0,1)
             
             // if the position has been claimed or not, as well as if the subGame has been won or is otherwise unavailable
-            let isTaken = singleContainsOr(box, ['o', 'x', 'c']) || singleContainsOr(subGames[chosenGame], ['o', 'x', 'c', 'notHere']);
+            let isTaken = singleContainsOr(box, ['o', 'x', 'c', 'unavailableBox']) || singleContainsOr(subGames[chosenGame], ['o', 'x', 'c', 'notHere']);
             if(gameRunning && !isTaken){
                 //is available
                 box.classList.add(currPlayer, 'unavailableBox');
@@ -94,6 +94,7 @@ function resetGame(){
     for(j = 0; j<9; j++){    
         resetSubGame(j);
     }
+    currPlayer = 'o';
 }
 
 // gives here/notHere functionality
@@ -118,7 +119,7 @@ function selectSub(clicked_box_pos){
 }
 
 // Checks if the box has come out as a win, or if it has become a cat's game
-// inArray is the array being checked, newThing is the newest play from 0-8
+// inArray is the array being checked, newThing is the newest play in its index
 function checkWin(inArray, newThing){
     // a is row, b is col
     let a = newThing % ARRAYROWSIZE;
@@ -131,19 +132,20 @@ function checkWin(inArray, newThing){
     }
 
     //check col
-    if(!wins && (inArray[0][b] == inArray[1][b] == inArray[2][b])){
+    else if(!wins && (inArray[0][b] == inArray[1][b] == inArray[2][b])){
         wins = true;
     }
 
-        // Means it's on diagonal
-    if(!wins && newThing % 2 == 0){
+    // On diagonal if true
+    else if(!wins && newThing % 2 == 0){
 
-            // top left to bottom right diagonal, checked in the second part
+        // a bit less efficient, but more readable by a little bit
+        // top left to bottom right diagonal, checked in the second part of check
         if(newThing % 4 == 0 && (inArray[0][0] == inArray[1][1] == inArray[2][2])){
             wins = true;
         }
-            // other diagonal, checked in the second part
-        if(!wins && (newThing == 2 || newThing == 4 || newThing == 6) && (inArray[0][2] == inArray[1][1] == inArray[2][0])){
+        // other diagonal, checked in the second part of check
+        else if(!wins && (newThing == 2 || newThing == 4 || newThing == 6) && (inArray[0][2] == inArray[1][1] == inArray[2][0])){
             wins = true;
         }
     }
@@ -154,8 +156,8 @@ function checkWin(inArray, newThing){
 function isCat(arrayToCheck){
     var done = true;
     for(i = 0; done && i < 9; i++){
-        // if it hits a position that hasn't been filled, the game isn't done
-        done = arrayContainsOr(arrayToCheck[i], ['o', 'x', 'c']);
+        // if it hits any position that hasn't been filled, the game isn't cat's
+        done = singleContainsOr(arrayToCheck, ['o', 'x', 'c']);
     }
     return done;
 }
