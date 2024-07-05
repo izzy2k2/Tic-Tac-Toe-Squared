@@ -118,6 +118,25 @@ function selectSub(clicked_box_pos){
     }
 }
 
+// Array contains a class check for multiple values
+function arrayContainsOr(arrayToCheck, valuesArray){
+    doesContain = false;
+    for(i = 0; !doesContain && i < arrayToCheck.length; i++){
+        for(j = 0; !doesContain && j < valuesArray.length; j++){
+            doesContain = arrayToCheck[i].classList.contains(valuesArray[j])
+        }
+    }
+};
+
+// Single item contains from array
+function singleContainsOr(itemToCheck, valuesArray){
+    var itContains = false;
+    for(i = 0; !itContains && i < valuesArray.length; i++){
+        itContains = itemToCheck.classList.contains(valuesArray[i])
+    }
+    return itContains;
+};
+
 // Checks if the box has come out as a win, or if it has become a cat's game
 // inArray is the array being checked, newThing is the newest play in its index
 function checkWin(inArray, newThing){
@@ -157,7 +176,7 @@ function isCat(arrayToCheck){
     var done = true;
     for(i = 0; done && i < 9; i++){
         // if it hits any position that hasn't been filled, the game isn't cat's
-        done = singleContainsOr(arrayToCheck, ['o', 'x', 'c']);
+        done = singleContainsOr(arrayToCheck[i], ['o', 'x', 'c']);
     }
     return done;
 }
@@ -200,25 +219,6 @@ function endTurn(currSubGame, positionIn){
         selectSub(currSubGame);
     }
     tradePlayer();
-};
-
-// Array contains a class check for multiple values
-function arrayContainsOr(arrayToCheck, valuesArray){
-    doesContain = false;
-    for(i = 0; !doesContain && i < arrayToCheck.length; i++){
-        for(j = 0; !doesContain && j < valuesArray.length; j++){
-            doesContain = arrayToCheck[i].classList.contains(valuesArray[j])
-        }
-    }
-};
-
-// Single item contains from array
-function singleContainsOr(itemToCheck, valuesArray){
-    var itContains = false;
-    for(i = 0; !itContains && i < valuesArray.length; i++){
-        itContains = itemToCheck.classList.contains(valuesArray[i])
-    }
-    return itContains;
 };
 
 // Handles the availability and reset of the subGame information
