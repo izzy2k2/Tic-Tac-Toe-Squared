@@ -99,6 +99,7 @@ function resetGame(){
 // gives here/notHere functionality
 function selectSub(clicked_box_pos){
 
+    // start by seeing if the subgame isn't won
     if(!singleContainsOr(subGames[clicked_box_pos], ['x', 'o', 'c'])){
         subGames.forEach(game =>
             game.classList.add('notHere')
@@ -107,6 +108,7 @@ function selectSub(clicked_box_pos){
         subGames[clicked_box_pos].classList.remove('notHere')
         currBox = clicked_box_pos;
     }
+    // alternatively, ensures the player has access to all allowed squares
     else{
         // makes sure notHere isn't in any of the subGames since the player can choose any of them
         subGames.forEach(game =>
@@ -114,8 +116,6 @@ function selectSub(clicked_box_pos){
         )        
     }
 }
-
-
 
 // Checks if the box has come out as a win, or if it has become a cat's game
 // inArray is the array being checked, newThing is the newest play from 0-8
@@ -261,38 +261,41 @@ function runGame(playerCount = 2){
     resetGame();
 };
 
-// The intelligence for the AI's turn
-function aiTurn(){
-
-    // end by ending turn
-    endTurn()
-};
 
 // calls to check for win or cat in subGame, if won calls to check for win
 function endTurn(currSubGame, positionIn){
     // check to see if the subGame is won
     var checkIsWin = checkWin(overAllArray[currSubGame], positionIn)
     var isACat = isCat(subGames)
-    if(checkIsWin){
-        subGames[currSubGame].classList.add(currPlayer)
-    }
-    else if(isACat){
-        subGames[currSubGame].classList.add('c')
-    }
-    if(checkIsWin || isACat){
-        resetSubGame(currSubGame);
-        subGames[currSubGame].classList.add('unavailable')
 
-        // subGame has been won, is the full game won?
+    // if the subGame has been won, do this stuff
+    if(checkIsWin || isACat){
+        subWon(currSubGame);
+
+        // this is in here to make sure the grid is cleared first
+        if(checkIsWin){
+            subGames[currSubGame].classList.add(currPlayer)
+        }
+        else{
+            subGames[currSubGame].classList.add('c')
+        }
+
+        // SubGame has been won, is the full game won? if not leave it
         if(checkWin(subGames, currSubGame)){
-            // game is won
+            // Game is won
+            alert(currPlayer + "has won!");
+            gameRunning = false;
+            resetGame();
         }
         else if(isCat(subGames)){
-            // game is cat
+            // Game is cat
+            alert("Cat's game!");
+            gameRunning = false;
+            resetGame();
         }
     }
 
-    // go at the end of every turn to set up next turn, so it's better here
+    // This goes at the end of every turn to set up next turn, so it's better here
     if(gameRunning){
         selectSub(currSubGame);
     }
@@ -316,4 +319,17 @@ function singleContainsOr(itemToCheck, valuesArray){
         itContains = itemToCheck.classList.contains(valuesArray[i])
     }
     return itContains;
+};
+
+// Handles the availability and reset of the subGame information
+function subWon(subPos){
+    resetSubGame(subPos);
+    subGames[subPos].classList.add('unavailable');
+}
+
+// The intelligence for the AI's turn
+function aiTurn(){
+
+    // end by ending turn
+    endTurn()
 };
