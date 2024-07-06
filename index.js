@@ -39,6 +39,7 @@ startPauseButton.addEventListener('click', () => {
     }
 );
 
+// has issues if the user accidentally taps between boxes or fatfingers two at once
 // adding event listeners to each box, ensuring the chosen box has functionality
 for(i = 0; i < 9; i++){
     overAllArray[i].forEach(box =>
@@ -146,43 +147,51 @@ function singleContainsOr(itemToCheck, valuesArray){
 // Checks if the box has come out as a win, or if it has become a cat's game
 // inArray is the array being checked, newThing is the newest play in its index
 function checkWin(inArray, newThing){
-    // a is row, b is col
+    // a is row#, b is col#
     let a = Math.floor(newThing / ARRAYROWSIZE);
-    let b = newThing - (a * ARRAYROWSIZE);
+    let b = newThing % ARRAYROWSIZE;
     let wins = false;
+    // use it as a multiplier/additive
+
+    // use currPlayer to check who
+    // needs to be checked as a 1d array, not 2d
 
     // check row
-    if(inArray[a][0] == inArray[a][1] == inArray[a][2]){
+    let rowStart = 3 * a;
+    if(inArray[rowStart].classList.contains(currPlayer) && inArray[rowStart + 1].classList.contains(currPlayer) && inArray[rowStart + 2].classList.contains(currPlayer)){
         wins = true;
     }
 
     //check col
-    else if(!wins && (inArray[0][b] == inArray[1][b] == inArray[2][b])){
+    else if(!wins && (inArray[b].classList.contains(currPlayer) && inArray[b + 3].classList.contains(currPlayer) && inArray[b + 6].classList.contains(currPlayer))){
         wins = true;
     }
 
     // On diagonal if true
     else if(!wins && newThing % 2 == 0){
+        var topLeftBottomRight = inArray[0].classList.contains(currPlayer); 
+        topLeftBottomRight &&= inArray[4].classList.contains(currPlayer);
+        topLeftBottomRight &&= inArray[8].classList.contains(currPlayer);
 
         // a bit less efficient, but more readable by a little bit
         // top left to bottom right diagonal, checked in the second part of check
-        if(newThing % 4 == 0 && (inArray[0][0] == inArray[1][1] == inArray[2][2])){
+        if(topLeftBottomRight && newThing % 4 == 0){          
             wins = true;
         }
         // other diagonal, checked in the second part of check
-        else if(!wins && (newThing == 2 || newThing == 4 || newThing == 6) && (inArray[0][2] == inArray[1][1] == inArray[2][0])){
+        else if((newThing == 2 || newThing == 4 || newThing == 6) && (inArray[2].classList.contains(currPlayer) && inArray[4] && inArray[6].classList.contains(currPlayer))){
             wins = true;
         }
     }
     return wins;
-};
+}; 
 
 // To see if the array has become a cat's game
 function isCat(arrayToCheck){
     var done = true;
     for(i = 0; done && i < 9; i++){
         // if it hits any position that hasn't been filled, the game isn't cat's
-        done = singleContainsOr(arrayToCheck[i], ['o', 'x', 'c']);
+        done = arrayToCheck[i].classList.contains('unavailable') || arrayToCheck[i].classList.contains('unavailableBox');
     }
     return done;
 }
@@ -191,8 +200,10 @@ function isCat(arrayToCheck){
 function endTurn(currSubGame, positionIn){
     // check to see if the subGame is won
     var checkIsWin = checkWin(overAllArray[currSubGame], positionIn);
-    var isACat = isCat(overAllArray[currSubGame]);
-
+    var isACat = false;
+    if(!checkIsWin){
+        isACat = isCat(overAllArray[currSubGame]);
+    }
     // if the subGame has been won, do this stuff
     if(checkIsWin || isACat){
         subWon(currSubGame);
@@ -208,7 +219,7 @@ function endTurn(currSubGame, positionIn){
         // SubGame has been won, is the full game won? if not leave it
         if(checkWin(subGames, currSubGame)){
             // Game is won
-            alert(currPlayer + "has won!");
+            alert(currPlayer + " has won!");
             gameRunning = false;
             resetGame();
         }
@@ -223,8 +234,8 @@ function endTurn(currSubGame, positionIn){
     // This goes at the end of every turn to set up next turn, so it's better here
     if(gameRunning){
         selectSub(positionIn);
+        tradePlayer();
     }
-    tradePlayer();
 };
 
 // The intelligence for the AI's turn
