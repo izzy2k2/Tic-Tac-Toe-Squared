@@ -281,19 +281,67 @@ function aiTurn(){
     if(currBox == 9){
         var willWin = false;
         var priority = 0;
+        var blockEnemySub = 9;
+        var blockEnemy = 9;
+        var enemyCanWin = false;
         // can pick from any available square, prioritize a square if it'll give the win
         for(i = 0; !willWin && i < 9; i++){
-            // check for which one, if a particular square wins its box it gets a value of 1, 
-            // if it wins the game after winning immediately exit
-            // priority will pick randomly between the two, whichever random value gets picked in coinflip is chosen
-            var winPossibility =canLeadToWin(overAllArray[i]);
-            if(winPossibility != 9){
-                // the value of winPossibility is the spot that will lead to a win
-
+            if(!subGames[i].classList.contains('unavailable')){   
+                // only look at games that haven't been won as options
+                // check for which one, if a particular square wins its box it gets a value of 1, 
+                // if it wins the game after winning immediately exit
+                // priority will pick randomly between the two, whichever random value gets picked in coinflip is chosen
+                var winPossibility =canLeadToWin(overAllArray[i], 'x');
+                var temp = canLeadToWin(overAllArray[i], 'o')
+                if(winPossibility != 9){
+                    // the value of winPossibility is the spot that will lead to a win
+                    willWin = canLeadToWin(subGames, 'x') == i;
+                    if(priority != 1){
+                        priority = 1;
+                        boxSelected = i;
+                    }
+                    else if (!willWin){
+                        // random selection between the options, 0 makes it the new one while 1 leaves it alone
+                        var selection = Math.floor(Math.random() * 2);
+                        if(selection == 0){
+                            boxSelected = i;
+                        }
+                    }
+                    if(willWin){
+                        boxSelected = i;
+                        sub = winPossibility;
+                    }
+                }
+                else if(!enemyCanWin && temp != 9){
+                    // there's something that can be done to fend off the enemy here
+                    enemyCanWin = canLeadToWin(subGames, 'o') == i;
+                    
+                    if(blockEnemySub == 9){
+                        // hasn't been triggered
+                        blockEnemySub = i;
+                        blockEnemy = temp;
+                    }
+                    else if (!enemyCanWin){
+                        // random selection between the options, 0 makes it the new one while 1 leaves it alone
+                        var selection = Math.floor(Math.random() * 2);
+                        if(selection == 0){
+                            blockEnemySub = i;
+                        }
+                    }
+                    if(enemyCanWin){
+                        blockEnemySub = i;
+                    }
+                }
             }
         }
-        if(!willWin && priority == 0){
-            //pick a spot at random, one hasn't already been picked
+        // if you can win everything, take that. If enemy can win, steal that. If you can win the box, do so. If enemy can win box, steal. Else get random
+        if(!willWin && enemyCanWin){
+            // you can't win, but you can keep an enemy away from it.
+            boxSelected = blockEnemySub;
+            sub = blockEnemy;
+        }
+        else if(!willWin && priority == 0){
+            //pick a spot at random, one hasn't already been picked by one person or another being able to win
             //generate a random array then generate a randomPosition, always generates a position that's available
             var random1 = randomPosition(subGames);
             var random2 = randomPosition(overAllArray[randomOne]);
@@ -320,7 +368,7 @@ function aiTurn(){
 
     var currSelection = document.getElementById(boxSelected + "-" + sub);
     currSelection.classList.add(currPlayer, 'unavailable');
-    
+
     // end by ending turn
     endTurn(boxSelected, sub);
 };
