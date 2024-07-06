@@ -370,19 +370,23 @@ function aiTurn(){
     }
 
     var currSelection = document.getElementById(boxSelected + "-" + sub);
-    currSelection.classList.add(currPlayer, 'unavailable');
+    currSelection.classList.add(currPlayer, 'unavailableBox');
 
     // end by ending turn
     endTurn(boxSelected, sub);
 };
 
+// asking what, if anything, can lead to win looking at the chosen player in the array
 function canLeadToWin(checkArray, playerHere){
-    // loop through available spots in array to win
+    // loop through available spots in array to see if something gives a win for playerHere
     var result = 9;
     var winFound = false;
     for(i = 0; !winFound && i < checkArray.length; i++){
-        winFound = checkWin(checkArray, i, playerHere, true);
-        result = i;
+        // see if the position in the array being checked is even available
+        if(!((checkArray[i]).classList.contains('unavailable') || checkArray[i].classList.contains('unavailableBox'))){
+            winFound = checkWin(checkArray, i, playerHere, true);
+            result = i;
+        }
     }
     if(!winFound){
         result = 9;
