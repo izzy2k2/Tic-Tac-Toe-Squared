@@ -1,24 +1,24 @@
 const ARRAYROWSIZE = 3;
-const subGames = document.querySelectorAll('.subGame')
+const subGames = document.querySelectorAll('.subGame');
 
-const startPauseButton = document.querySelector("#start-end-button")
+const startPauseButton = document.querySelector("#start-end-button");
 var gameRunning = false;
 var userCount = document.querySelector("label[for=playerCount]");
 var playerCount = 1;
 var currPlayer = 'o';
 var currBox = 9;
 
-let overAllArray = []
+let overAllArray = [];
 // Turning subGames into a 2d array- overAllArray[x] is the set of boxes at subGames[x]
-overAllArray[0] = document.querySelectorAll("[id^='0-']")
-overAllArray[1] = document.querySelectorAll("[id^='1-']")
-overAllArray[2] = document.querySelectorAll("[id^='2-']")
-overAllArray[3] = document.querySelectorAll("[id^='3-']")
-overAllArray[4] = document.querySelectorAll("[id^='4-']")
-overAllArray[5] = document.querySelectorAll("[id^='5-']")
-overAllArray[6] = document.querySelectorAll("[id^='6-']")
-overAllArray[7] = document.querySelectorAll("[id^='7-']")
-overAllArray[8] = document.querySelectorAll("[id^='8-']")
+overAllArray[0] = document.querySelectorAll("[id^='0-']");
+overAllArray[1] = document.querySelectorAll("[id^='1-']");
+overAllArray[2] = document.querySelectorAll("[id^='2-']");
+overAllArray[3] = document.querySelectorAll("[id^='3-']");
+overAllArray[4] = document.querySelectorAll("[id^='4-']");
+overAllArray[5] = document.querySelectorAll("[id^='5-']");
+overAllArray[6] = document.querySelectorAll("[id^='6-']");
+overAllArray[7] = document.querySelectorAll("[id^='7-']");
+overAllArray[8] = document.querySelectorAll("[id^='8-']");
 
 // Entirely functional start/end button
 startPauseButton.addEventListener('click', () => {
@@ -27,6 +27,7 @@ startPauseButton.addEventListener('click', () => {
         // if it's just been set to true, start game; if newly yset to false, reset
         if(gameRunning){
             if(playerCount == 1){
+                // trade these alerts for something in the html that can be swapped out- current player to the html spot
                 alert("Let's start playing! You're Os");
             }
             else{
@@ -47,7 +48,7 @@ for(i = 0; i < 9; i++){
             // when clicked, if it doesn't have a selection or its subGame isn't won, and the game is in play, make one, if not don't
             
             // get which subGame it's in
-            let chosenGame = box.id.substring(0,1)
+            let chosenGame = box.id.substring(0,1);
             
             // if the position has been claimed or not, as well as if the subGame has been won or is otherwise unavailable
             let isTaken = box.classList.contains('unavailableBox') || singleContainsOr(subGames[chosenGame], ['o', 'x', 'c', 'notHere']);
@@ -65,16 +66,16 @@ for(i = 0; i < 9; i++){
                 }         
             }
         })
-    )
+    );
 }
 
 // Self explanatory, swaps whose turn it is
 function tradePlayer(){
     if(currPlayer == 'o'){
-        currPlayer = 'x'
+        currPlayer = 'x';
     }
     else{
-        currPlayer = 'o'
+        currPlayer = 'o';
     }   
 }
 
@@ -87,7 +88,7 @@ function subWon(subPos){
 // Reset a sub-game in the case of a tic tac toe win/cat game or reset 
 function resetSubGame(boxToReset){
     for(i = 0; i < 9; i++){
-            overAllArray[boxToReset][i].classList.remove('x', 'o', 'c', 'unavailableBox')
+            overAllArray[boxToReset][i].classList.remove('x', 'o', 'c', 'unavailableBox');
     }
 }
 
@@ -95,7 +96,7 @@ function resetSubGame(boxToReset){
 function resetGame(){
     subGames.forEach(game =>
         game.classList.remove('x', 'o', 'c', 'unavailable', 'notHere')
-    )
+    );
 
     // only doing this because this version of the game is locked in size
     for(j = 0; j<9; j++){    
@@ -111,9 +112,9 @@ function selectSub(clicked_box_pos){
     if(!singleContainsOr(subGames[clicked_box_pos], ['x', 'o', 'c'])){
         subGames.forEach(game =>
             game.classList.add('notHere')
-        )        
-        // can select only the one directed to, if the one directed to is allowed
-        subGames[clicked_box_pos].classList.remove('notHere')
+        );        
+        // can select only the one directed to, if the one directed to is allowed(reactivate the available spot)
+        subGames[clicked_box_pos].classList.remove('notHere');
         currBox = clicked_box_pos;
     }
     // alternatively, ensures the player has access to all allowed squares
@@ -121,7 +122,7 @@ function selectSub(clicked_box_pos){
         // makes sure notHere isn't in any of the subGames since the player can choose any of them
         subGames.forEach(game =>
             game.classList.remove('notHere')
-        )
+        );
         currBox = 9;        
     }
 }
@@ -240,10 +241,10 @@ function endTurn(currSubGame, positionIn){
 
         // this is in here to make sure the grid is cleared first
         if(checkIsWin){
-            subGames[currSubGame].classList.add(currPlayer)
+            subGames[currSubGame].classList.add(currPlayer);
         }
         else{
-            subGames[currSubGame].classList.add('c')
+            subGames[currSubGame].classList.add('c');
         }
 
         // SubGame has been won, is the full game won? if not leave it
@@ -292,7 +293,7 @@ function aiTurn(){
                 // if it wins the game after winning immediately exit
                 // priority will pick randomly between the two, whichever random value gets picked in coinflip is chosen
                 var winPossibility =canLeadToWin(overAllArray[i], 'x');
-                var temp = canLeadToWin(overAllArray[i], 'o')
+                var temp = canLeadToWin(overAllArray[i], 'o');
                 if(winPossibility != 9){
                     // the value of winPossibility is the spot that will lead to a win
                     willWin = canLeadToWin(subGames, 'x') == i;
@@ -329,7 +330,9 @@ function aiTurn(){
                         }
                     }
                     if(enemyCanWin){
+                        // found a spot where the user can win the whole game, so that's locked in as the selected blocking location
                         blockEnemySub = i;
+                        blockEnemy = temp;
                     }
                 }
             }
@@ -352,7 +355,7 @@ function aiTurn(){
     else{
         // see if either player can win in one square, otherwise throw out random position
         boxSelected = currBox;
-        sub = canLeadToWin(overAllArray[currBox], 'x')
+        sub = canLeadToWin(overAllArray[currBox], 'x');
 
         // if not 9, leave it there; if 9 pick something else
         if(sub == 9){
