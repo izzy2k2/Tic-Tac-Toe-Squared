@@ -50,7 +50,7 @@ for(i = 0; i < 9; i++){
             let chosenGame = box.id.substring(0,1)
             
             // if the position has been claimed or not, as well as if the subGame has been won or is otherwise unavailable
-            let isTaken = singleContainsOr(box, ['o', 'x', 'c', 'unavailableBox']) || singleContainsOr(subGames[chosenGame], ['o', 'x', 'c', 'notHere']);
+            let isTaken = box.classList.contains('unavailableBox') || singleContainsOr(subGames[chosenGame], ['o', 'x', 'c', 'notHere']);
             if(gameRunning && !isTaken){
                 //is available
                 box.classList.add(currPlayer, 'unavailableBox');
@@ -121,7 +121,8 @@ function selectSub(clicked_box_pos){
         // makes sure notHere isn't in any of the subGames since the player can choose any of them
         subGames.forEach(game =>
             game.classList.remove('notHere')
-        )        
+        )
+        currBox = 9;        
     }
 }
 
@@ -146,41 +147,70 @@ function singleContainsOr(itemToCheck, valuesArray){
 
 // Checks if the box has come out as a win, or if it has become a cat's game
 // inArray is the array being checked, newThing is the newest play in its index
-function checkWin(inArray, newThing){
+function checkWin(inArray, newThing, playerNow = currPlayer, lookingAhead = false){
     // a is row#, b is col#
     let a = Math.floor(newThing / ARRAYROWSIZE);
     let b = newThing % ARRAYROWSIZE;
     let wins = false;
+    let rowStart = 3 * a;
     // use it as a multiplier/additive
 
     // use currPlayer to check who
     // needs to be checked as a 1d array, not 2d
-
-    // check row
-    let rowStart = 3 * a;
-    if(inArray[rowStart].classList.contains(currPlayer) && inArray[rowStart + 1].classList.contains(currPlayer) && inArray[rowStart + 2].classList.contains(currPlayer)){
-        wins = true;
-    }
-
-    //check col
-    else if(!wins && (inArray[b].classList.contains(currPlayer) && inArray[b + 3].classList.contains(currPlayer) && inArray[b + 6].classList.contains(currPlayer))){
-        wins = true;
-    }
-
-    // On diagonal if true
-    else if(!wins && newThing % 2 == 0){
-        var topLeftBottomRight = inArray[0].classList.contains(currPlayer); 
-        topLeftBottomRight &&= inArray[4].classList.contains(currPlayer);
-        topLeftBottomRight &&= inArray[8].classList.contains(currPlayer);
-
-        // a bit less efficient, but more readable by a little bit
-        // top left to bottom right diagonal, checked in the second part of check
-        if(topLeftBottomRight && newThing % 4 == 0){          
+    if(!lookingAhead)
+        {// check row
+        if(inArray[rowStart].classList.contains(playerNow) && inArray[rowStart + 1].classList.contains(playerNow) && inArray[rowStart + 2].classList.contains(playerNow)){
             wins = true;
         }
-        // other diagonal, checked in the second part of check
-        else if((newThing == 2 || newThing == 4 || newThing == 6) && (inArray[2].classList.contains(currPlayer) && inArray[4] && inArray[6].classList.contains(currPlayer))){
+
+        //check col
+        else if(!wins && (inArray[b].classList.contains(playerNow) && inArray[b + 3].classList.contains(playerNow) && inArray[b + 6].classList.contains(playerNow))){
             wins = true;
+        }
+
+        // On diagonal if true
+        else if(!wins && newThing % 2 == 0){
+            var topLeftBottomRight = inArray[0].classList.contains(playerNow); 
+            topLeftBottomRight &&= inArray[4].classList.contains(playerNow);
+            topLeftBottomRight &&= inArray[8].classList.contains(playerNow);
+
+            // a bit less efficient, but more readable by a little bit
+            // top left to bottom right diagonal, checked in the second part of check
+            if(topLeftBottomRight && newThing % 4 == 0){          
+                wins = true;
+            }
+            // other diagonal, checked in the second part of check
+            else if((newThing == 2 || newThing == 4 || newThing == 6) && (inArray[2].classList.contains(playerNow) && inArray[4] && inArray[6].classList.contains(playerNow))){
+                wins = true;
+            }
+        }
+    }
+    else{
+        // do the same stuff without checking the spots that are being checked for
+        if((newThing == rowStart || inArray[rowStart].classList.contains(playerNow)) && (newThing == rowStart + 1 || inArray[rowStart + 1].classList.contains(playerNow)) && (newThing == rowStart + 2 || inArray[rowStart + 2].classList.contains(playerNow))){
+            wins = true;
+        }
+
+        //check col
+        else if(!wins && ((newThing == b || inArray[b].classList.contains(playerNow)) && (newThing == b + 3 || inArray[b + 3].classList.contains(playerNow)) && (newThing == b + 6 || inArray[b + 6].classList.contains(playerNow)))){
+            wins = true;
+        }
+
+        // On diagonal if true
+        else if(!wins && newThing % 2 == 0){
+            var topLeftBottomRight = (newThing == 0 || inArray[0].classList.contains(playerNow)); 
+            topLeftBottomRight &&= (newThing == 4 || inArray[4].classList.contains(playerNow));
+            topLeftBottomRight &&= (newThing == 8 || inArray[8].classList.contains(playerNow));
+
+            // a bit less efficient, but more readable by a little bit
+            // top left to bottom right diagonal, checked in the second part of check
+            if(topLeftBottomRight && newThing % 4 == 0){          
+                wins = true;
+            }
+            // other diagonal, checked in the second part of check
+            else if((newThing == 2 || inArray[2].classList.contains(playerNow)) && (newThing == 4 || inArray[4].classList.contains(playerNow)) && (newThing == 6 || inArray[6].classList.contains(playerNow))){
+                wins = true;
+            }
         }
     }
     return wins;
@@ -239,8 +269,86 @@ function endTurn(currSubGame, positionIn){
 };
 
 // The intelligence for the AI's turn
+// not starting it with the ability to tell if it can win the game in a few moves
 function aiTurn(){
+    // start by looking at the square of choice- if 9, see what's available
+    // use checkWin to see if either player can win
+    // delegate that action to some other function(because of 9)
+    var boxSelected = 0;
+    var sub = 0;
 
+    // will pick out particular box using the id generated
+    if(currBox == 9){
+        var willWin = false;
+        var priority = 0;
+        // can pick from any available square, prioritize a square if it'll give the win
+        for(i = 0; !willWin && i < 9; i++){
+            // check for which one, if a particular square wins its box it gets a value of 1, 
+            // if it wins the game after winning immediately exit
+            // priority will pick randomly between the two, whichever random value gets picked in coinflip is chosen
+            var winPossibility =canLeadToWin(overAllArray[i]);
+            if(winPossibility != 9){
+                // the value of winPossibility is the spot that will lead to a win
+
+            }
+        }
+        if(!willWin && priority == 0){
+            //pick a spot at random, one hasn't already been picked
+            //generate a random array then generate a randomPosition, always generates a position that's available
+            var random1 = randomPosition(subGames);
+            var random2 = randomPosition(overAllArray[randomOne]);
+            boxSelected = random1;
+            sub = random2;
+        }
+    }
+    else{
+        // see if either player can win in one square, otherwise throw out random position
+        boxSelected = currBox;
+        sub = canLeadToWin(overAllArray[currBox], 'x')
+
+        // if not 9, leave it there; if 9 pick something else
+        if(sub == 9){
+            //if something can lead to other player winning, block them
+            sub = canLeadToWin(overAllArray[currBox], 'o');
+
+            // otherwise, randomly select
+            if(sub == 9){
+                sub = randomPosition(overAllArray[currBox]);
+            }
+        }
+    }
+
+    var currSelection = document.getElementById(boxSelected + "-" + sub);
+    currSelection.classList.add(currPlayer, 'unavailable');
+    
     // end by ending turn
-    endTurn()
+    endTurn(boxSelected, sub);
 };
+
+function canLeadToWin(checkArray, playerHere){
+    // loop through available spots in array to win
+    var result = 9;
+    var winFound = false;
+    for(i = 0; !winFound && i < checkArray.length; i++){
+        winFound = checkWin(checkArray, i, playerHere, true);
+        result = i;
+    }
+    if(!winFound){
+        result = 9;
+    }
+    return result;
+}
+
+function randomPosition(array){
+    //get a valid position in the list
+    var isOkay = false;
+    var randomness = 0;
+    while(!isOkay){
+        randomness = Math.floor(Math.random() * 9);
+        if(!(array[randomness].classList.contains('unavailable') || array[randomness].classList.contains('unavailableBox'))){
+            // the value is available
+            isOkay = true;
+        }
+    }
+    return randomness;
+}
