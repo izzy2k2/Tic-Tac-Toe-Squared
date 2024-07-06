@@ -3,7 +3,7 @@ const subGames = document.querySelectorAll('.subGame');
 
 const startPauseButton = document.querySelector("#start-end-button");
 var gameRunning = false;
-var userCount = document.querySelector("label[for=playerCount]");
+var userCount = document.getElementById("playerCountVal");
 var playerCount = 1;
 var currPlayer = 'o';
 var currBox = 9;
@@ -23,7 +23,7 @@ overAllArray[8] = document.querySelectorAll("[id^='8-']");
 // Entirely functional start/end button
 startPauseButton.addEventListener('click', () => {
         gameRunning = !gameRunning;
-        playerCount = userCount;
+        playerCount = userCount.value;
         // if it's just been set to true, start game; if newly yset to false, reset
         if(gameRunning){
             if(playerCount == 1){
