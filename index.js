@@ -108,7 +108,7 @@ function resetGame(){
 // gives here/notHere functionality
 function selectSub(clicked_box_pos){
 
-    // start by seeing if the subgame isn't won
+    // start by seeing if the subgame isn't won, true if possible
     if(!singleContainsOr(subGames[clicked_box_pos], ['x', 'o', 'c'])){
         subGames.forEach(game =>
             game.classList.add('notHere')
@@ -158,8 +158,8 @@ function checkWin(inArray, newThing, playerNow = currPlayer, lookingAhead = fals
 
     // use currPlayer to check who
     // needs to be checked as a 1d array, not 2d
-    if(!lookingAhead)
-        {// check row
+    if(!lookingAhead){
+        // check row
         if(inArray[rowStart].classList.contains(playerNow) && inArray[rowStart + 1].classList.contains(playerNow) && inArray[rowStart + 2].classList.contains(playerNow)){
             wins = true;
         }
@@ -187,25 +187,25 @@ function checkWin(inArray, newThing, playerNow = currPlayer, lookingAhead = fals
         }
     }
     else{
-        // do the same stuff without checking the spots that are being checked for
+        // do the same stuff without checking the spots that are being checked for(seeing if it *can* give success)
         if((newThing == rowStart || inArray[rowStart].classList.contains(playerNow)) && (newThing == rowStart + 1 || inArray[rowStart + 1].classList.contains(playerNow)) && (newThing == rowStart + 2 || inArray[rowStart + 2].classList.contains(playerNow))){
             wins = true;
         }
 
-        //check col
-        else if(!wins && ((newThing == b || inArray[b].classList.contains(playerNow)) && (newThing == b + 3 || inArray[b + 3].classList.contains(playerNow)) && (newThing == b + 6 || inArray[b + 6].classList.contains(playerNow)))){
+        //check col, don't need !wins if else is used
+        else if((newThing == b || inArray[b].classList.contains(playerNow)) && (newThing == b + 3 || inArray[b + 3].classList.contains(playerNow)) && (newThing == b + 6 || inArray[b + 6].classList.contains(playerNow))){
             wins = true;
         }
 
-        // On diagonal if true
-        else if(!wins && newThing % 2 == 0){
+        // On diagonal if true and no others are used
+        else if(newThing % 2 == 0){
             var topLeftBottomRight = (newThing == 0 || inArray[0].classList.contains(playerNow)); 
             topLeftBottomRight &&= (newThing == 4 || inArray[4].classList.contains(playerNow));
             topLeftBottomRight &&= (newThing == 8 || inArray[8].classList.contains(playerNow));
 
             // a bit less efficient, but more readable by a little bit
             // top left to bottom right diagonal, checked in the second part of check
-            if(topLeftBottomRight && newThing % 4 == 0){          
+            if(newThing % 4 == 0 && topLeftBottomRight){          
                 wins = true;
             }
             // other diagonal, checked in the second part of check
@@ -394,11 +394,10 @@ function canLeadToWin(checkArray, playerHere){
         // see if the position in the array being checked is even available
         if(!(checkArray[i].classList.contains('unavailable') || checkArray[i].classList.contains('unavailableBox'))){
             winFound = checkWin(checkArray, i, playerHere, true);
-            result = i;
+            if(winFound){
+                result = i;
+            }
         }
-    }
-    if(!winFound){
-        result = 9;
     }
     return result;
 };
