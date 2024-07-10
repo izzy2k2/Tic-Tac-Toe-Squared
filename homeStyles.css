@@ -1,0 +1,24 @@
+.navBar{
+    background-color: aqua;
+    overflow: hidden;
+}
+
+.navBar a{
+    float: left;
+    color: darkmagenta;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.navBar a:hover{
+    background-color: aqua;
+    color: black;
+}
+
+.navBar a.active{
+    background-color: blueviolet;
+    color: aliceblue;
+    cursor: disabled;
+}
