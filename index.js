@@ -77,20 +77,20 @@ function tradePlayer(){
     else{
         currPlayer = 'o';
     }   
-}
+};
 
 // Handles the availability and reset of the subGame information
 function subWon(subPos){
     resetSubGame(subPos);
     subGames[subPos].classList.add('unavailable');
-}
+};
 
 // Reset a sub-game in the case of a tic tac toe win/cat game or reset 
 function resetSubGame(boxToReset){
     for(i = 0; i < 9; i++){
             overAllArray[boxToReset][i].classList.remove('x', 'o', 'c', 'unavailableBox');
     }
-}
+};
 
 // Resets the game, resetting both boxes and subGames by removing their extra tags
 function resetGame(){
@@ -103,7 +103,7 @@ function resetGame(){
         resetSubGame(j);
     }
     currPlayer = 'o';
-}
+};
 
 // gives here/notHere functionality
 function selectSub(clicked_box_pos){
@@ -125,7 +125,7 @@ function selectSub(clicked_box_pos){
         );
         currBox = 9;        
     }
-}
+};
 
 // Array contains a class check for multiple values
 function arrayContainsOr(arrayToCheck, valuesArray){
@@ -225,7 +225,7 @@ function isCat(arrayToCheck){
         done = arrayToCheck[i].classList.contains('unavailable') || arrayToCheck[i].classList.contains('unavailableBox');
     }
     return done;
-}
+};
 
 // calls to check for win or cat in subGame, if won calls to check for win
 function endTurn(currSubGame, positionIn){
@@ -300,6 +300,7 @@ function aiTurn(){
                     if(priority != 1){
                         priority = 1;
                         boxSelected = i;
+                        sub = winPossibility;
                     }
                     else if (!willWin){
                         // random selection between the options, 0 makes it the new one while 1 leaves it alone
@@ -337,12 +338,20 @@ function aiTurn(){
                 }
             }
         }
+
         // if you can win everything, take that. If enemy can win, steal that. If you can win the box, do so. If enemy can win box, steal. Else get random
-        if(!willWin && enemyCanWin){
-            // you can't win, but you can keep an enemy away from it.
+
+        // willWin has already selected a spot if it will
+        if((!willWin && enemyCanWin) || (priority == 0 && blockEnemy != 9)){
+            // you can't win the whole game, but you can keep an enemy away from it.
             boxSelected = blockEnemySub;
             sub = blockEnemy;
         }
+        // if none of the above but the square can be won by the bot pick that(priority 1)
+
+        // if the square can't be won, choose to block the enemy, second option in previous if statement
+        
+        // if none of the above, pick something at random
         else if(!willWin && priority == 0){
             //pick a spot at random, one hasn't already been picked by one person or another being able to win
             //generate a random array then generate a randomPosition, always generates a position that's available
@@ -383,7 +392,7 @@ function canLeadToWin(checkArray, playerHere){
     var winFound = false;
     for(i = 0; !winFound && i < checkArray.length; i++){
         // see if the position in the array being checked is even available
-        if(!((checkArray[i]).classList.contains('unavailable') || checkArray[i].classList.contains('unavailableBox'))){
+        if(!(checkArray[i].classList.contains('unavailable') || checkArray[i].classList.contains('unavailableBox'))){
             winFound = checkWin(checkArray, i, playerHere, true);
             result = i;
         }
@@ -392,7 +401,7 @@ function canLeadToWin(checkArray, playerHere){
         result = 9;
     }
     return result;
-}
+};
 
 function randomPosition(array){
     //get a valid position in the list
@@ -406,4 +415,4 @@ function randomPosition(array){
         }
     }
     return randomness;
-}
+};
