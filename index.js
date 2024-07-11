@@ -294,6 +294,7 @@ function aiTurn(){
                 // priority will pick randomly between the two, whichever random value gets picked in coinflip is chosen
                 var winPossibility =canLeadToWin(overAllArray[i], 'x');
                 var temp = canLeadToWin(overAllArray[i], 'o');
+                console.log("winPossibility: " + winPossibility + "  other win: " + temp)
                 if(winPossibility != 9){
                     // the value of winPossibility is the spot that will lead to a win
                     willWin = canLeadToWin(subGames, 'x') == i;
@@ -362,7 +363,7 @@ function aiTurn(){
         }
     }
     else{
-        // see if either player can win in one square, otherwise throw out random position
+        // see if either player can win in the chosen one square, otherwise throw out random position
         boxSelected = currBox;
         sub = canLeadToWin(overAllArray[currBox], 'x');
 
@@ -378,8 +379,7 @@ function aiTurn(){
         }
     }
 
-    var currSelection = document.getElementById(boxSelected + "-" + sub);
-    currSelection.classList.add(currPlayer, 'unavailableBox');
+    overAllArray[boxSelected][sub].classList.add(currPlayer, 'unavailableBox');
 
     // end by ending turn
     endTurn(boxSelected, sub);
@@ -390,15 +390,21 @@ function canLeadToWin(checkArray, playerHere){
     // loop through available spots in array to see if something gives a win for playerHere
     var result = 9;
     var winFound = false;
-    for(i = 0; !winFound && i < checkArray.length; i++){
+    for(i = 0; !winFound && i < 9; i++){
         // see if the position in the array being checked is even available
-        if(!(checkArray[i].classList.contains('unavailable') || checkArray[i].classList.contains('unavailableBox'))){
+        var isUnavailable = checkArray[i].classList.contains("unavailableBox");
+        isUnavailable ||= checkArray[i].classList.contains("unavailable");
+        if(isUnavailable){
+            console.log(i + " is unavailable")
+        }
+        if(!isUnavailable){
             winFound = checkWin(checkArray, i, playerHere, true);
             if(winFound){
                 result = i;
             }
         }
     }
+    console.log("split")
     return result;
 };
 
