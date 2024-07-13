@@ -281,7 +281,6 @@ function aiTurn(){
     // will pick out particular box using the id generated
     if(currBox == 9){
         var willWin = false;
-        var priority = 0;
         var blockEnemySub = 9;
         var blockEnemy = 9;
         var enemyCanWin = false;
@@ -298,8 +297,7 @@ function aiTurn(){
                 if(winPossibility != 9){
                     // the value of winPossibility is the spot that will lead to a win
                     willWin = canLeadToWin(subGames, 'x') == i;
-                    if(priority != 1){
-                        priority = 1;
+                    if(boxSelected == 9){
                         boxSelected = i;
                         sub = winPossibility;
                     }
@@ -343,17 +341,16 @@ function aiTurn(){
         // if you can win everything, take that. If enemy can win, steal that. If you can win the box, do so. If enemy can win box, steal. Else get random
 
         // willWin has already selected a spot if it will
-        if((!willWin && enemyCanWin) || (priority == 0 && blockEnemy != 9)){
+        if((!willWin && enemyCanWin) || (boxSelected == 9 && blockEnemy != 9)){
             // you can't win the whole game, but you can keep an enemy away from it.
             boxSelected = blockEnemySub;
             sub = blockEnemy;
         }
         // if none of the above but the square can be won by the bot pick that(priority 1)
-
         // if the square can't be won, choose to block the enemy, second option in previous if statement
         
         // if none of the above, pick something at random
-        else if(!willWin && priority == 0){
+        else if(!willWin){
             //pick a spot at random, one hasn't already been picked by one person or another being able to win
             //generate a random array then generate a randomPosition, always generates a position that's available
             var random1 = randomPosition(subGames);
