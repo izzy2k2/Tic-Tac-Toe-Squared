@@ -379,7 +379,7 @@ function canLeadToWin(checkArray, playerHere){
             console.log(i + " is unavailable")
         }
         else{
-            winFound = checkWin(checkArray, i, playerHere, true);
+            winFound = checkCouldWin(checkArray, i, playerHere);
             if(winFound){
                 result = i;
             }
