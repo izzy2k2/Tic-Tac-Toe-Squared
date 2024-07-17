@@ -148,72 +148,56 @@ function singleContainsOr(itemToCheck, valuesArray){
 
 // Checks if the box has come out as a win, or if it has become a cat's game
 // inArray is the array being checked, newThing is the newest play in its index
-function checkWin(inArray, newThing, playerNow = currPlayer, lookingAhead = false){
+function checkWin(inArray, newThing){
     // a is row#, b is col#
-    let a = Math.floor(newThing / ARRAYROWSIZE);
-    let b = newThing % ARRAYROWSIZE;
-    let wins = false;
-    let rowStart = 3 * a;
+    let rowStart = (Math.floor(newThing / ARRAYROWSIZE)) * 3;
+    let colStart = newThing % ARRAYROWSIZE;
     // use it as a multiplier/additive
 
     // use currPlayer to check who
     // needs to be checked as a 1d array, not 2d
-    if(!lookingAhead){
-        // check row
-        if(inArray[rowStart].classList.contains(playerNow) && inArray[rowStart + 1].classList.contains(playerNow) && inArray[rowStart + 2].classList.contains(playerNow)){
-            wins = true;
-        }
+    // check row
+    let wins = inArray[rowStart].classList.contains(playerNow) && inArray[rowStart + 1].classList.contains(playerNow) && inArray[rowStart + 2].classList.contains(playerNow);
 
-        //check col
-        else if(!wins && (inArray[b].classList.contains(playerNow) && inArray[b + 3].classList.contains(playerNow) && inArray[b + 6].classList.contains(playerNow))){
-            wins = true;
-        }
+    //check col
+    wins ||= (inArray[colStart].classList.contains(playerNow) && inArray[colStart + 3].classList.contains(playerNow) && inArray[colStart + 6].classList.contains(playerNow));
 
-        // On diagonal if true
-        else if(!wins && newThing % 2 == 0){
-            var topLeftBottomRight = inArray[0].classList.contains(playerNow); 
-            topLeftBottomRight &&= inArray[4].classList.contains(playerNow);
-            topLeftBottomRight &&= inArray[8].classList.contains(playerNow);
-
-            // a bit less efficient, but more readable by a little bit
-            // top left to bottom right diagonal, checked in the second part of check
-            if(topLeftBottomRight && newThing % 4 == 0){          
-                wins = true;
-            }
-            // other diagonal, checked in the second part of check
-            else if((newThing == 2 || newThing == 4 || newThing == 6) && (inArray[2].classList.contains(playerNow) && inArray[4] && inArray[6].classList.contains(playerNow))){
-                wins = true;
-            }
-        }
+    // On diagonal if true, only check if it's not already a win
+    if(!wins && newThing % 2 == 0){
+        // top left to bottom right diagonal, checked in the second part of check
+        wins = newThing % 4 == 0 && (inArray[0].classList.contains(playerNow) && inArray[4].classList.contains(playerNow) && inArray[8].classList.contains(playerNow));
+        
+        // other diagonal, checked in the second part of check
+        wins ||= ((newThing == 2 || newThing == 4 || newThing == 6) && (inArray[2].classList.contains(playerNow) && inArray[4].contains(playerNow) && inArray[6].classList.contains(playerNow)));
     }
-    else{
-        // do the same stuff without checking the spots that are being checked for(seeing if it *can* give success)
-        if((newThing == rowStart || inArray[rowStart].classList.contains(playerNow)) && (newThing == rowStart + 1 || inArray[rowStart + 1].classList.contains(playerNow)) && (newThing == rowStart + 2 || inArray[rowStart + 2].classList.contains(playerNow))){
-            wins = true;
-        }
 
-        //check col, don't need !wins if else is used
-        else if((newThing == b || inArray[b].classList.contains(playerNow)) && (newThing == b + 3 || inArray[b + 3].classList.contains(playerNow)) && (newThing == b + 6 || inArray[b + 6].classList.contains(playerNow))){
-            wins = true;
-        }
+    return wins;
+}; 
 
-        // On diagonal if true and no others are used
-        else if(newThing % 2 == 0){
-            var topLeftBottomRight = (newThing == 0 || inArray[0].classList.contains(playerNow)); 
-            topLeftBottomRight &&= (newThing == 4 || inArray[4].classList.contains(playerNow));
-            topLeftBottomRight &&= (newThing == 8 || inArray[8].classList.contains(playerNow));
 
-            // a bit less efficient, but more readable by a little bit
-            // top left to bottom right diagonal, checked in the second part of check
-            if(newThing % 4 == 0 && topLeftBottomRight){          
-                wins = true;
-            }
-            // other diagonal, checked in the second part of check
-            else if((newThing == 2 || inArray[2].classList.contains(playerNow)) && (newThing == 4 || inArray[4].classList.contains(playerNow)) && (newThing == 6 || inArray[6].classList.contains(playerNow))){
-                wins = true;
-            }
-        }
+function checkCouldWin(inArray, newThing, playerNow = currPlayer){
+    // a is row#, b is col#
+    let rowStart = (Math.floor(newThing / ARRAYROWSIZE)) * 3;
+    let colStart = newThing % ARRAYROWSIZE;
+    // use it as a multiplier/additive
+
+    // use currPlayer to check who
+    // needs to be checked as a 1d array, not 2d
+    // check row
+    let wins = (newThing == rowStart || inArray[rowStart].classList.contains(playerNow)) && (newThing == rowStart + 1 || inArray[rowStart + 1].classList.contains(playerNow)) && (newThing == rowStart + 2 || inArray[rowStart + 2].classList.contains(playerNow));
+
+    //check col
+    wins ||= (newThing == colStart || inArray[colStart].classList.contains(playerNow)) && (newThing == colStart + 3 || inArray[colStart + 3].classList.contains(playerNow)) && (newThing == colStart + 6 || inArray[colStart + 6].classList.contains(playerNow));
+
+    // On diagonal if true, only check if it's not already a win
+    if(!wins && newThing % 2 == 0){
+        // top left to bottom right diagonal, checked in the second part of check
+        wins = newThing % 4 == 0 && ((newThing == 0 || inArray[0].classList.contains(playerNow)) && (newThing == 4 || inArray[4].classList.contains(playerNow)) && (newThing == 8 || inArray[8].classList.contains(playerNow)));
+        
+        // other diagonal, checked in the second part of check
+        wins ||= (newThing == 2 || inArray[2].classList.contains(playerNow)) && (newThing == 4 || inArray[4].classList.contains(playerNow)) && (newThing == 6 || inArray[6].classList.contains(playerNow));
     }
+
     return wins;
 }; 
 
@@ -394,7 +378,7 @@ function canLeadToWin(checkArray, playerHere){
         if(isUnavailable){
             console.log(i + " is unavailable")
         }
-        if(!isUnavailable){
+        else{
             winFound = checkWin(checkArray, i, playerHere, true);
             if(winFound){
                 result = i;
