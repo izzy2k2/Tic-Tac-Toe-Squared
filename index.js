@@ -40,8 +40,8 @@ startPauseButton.addEventListener('click', () => {
     }
 );
 
-// has issues if the user accidentally taps between boxes or fatfingers two at once
-// adding event listeners to each box, ensuring the chosen box has functionality
+// Note: has issues if the user accidentally taps between boxes or fatfingers two at once
+// Adding event listeners to each box, ensuring the chosen box has functionality
 for(i = 0; i < 9; i++){
     overAllArray[i].forEach(box =>
         box.addEventListener('click', () => {
@@ -69,7 +69,7 @@ for(i = 0; i < 9; i++){
     );
 }
 
-// Self explanatory, swaps whose turn it is
+// Simply swaps whose turn it is
 function tradePlayer(){
     if(currPlayer == 'o'){
         currPlayer = 'x';
@@ -105,7 +105,7 @@ function resetGame(){
     currPlayer = 'o';
 };
 
-// gives here/notHere functionality
+// Gives here/notHere functionality, so the user can only select available spots
 function selectSub(clicked_box_pos){
 
     // start by seeing if the subgame isn't won, true if possible
@@ -127,7 +127,7 @@ function selectSub(clicked_box_pos){
     }
 };
 
-// Single item contains from array
+// Single item contains from array(basically .contains for multiple values, in an or gate form)
 function singleContainsOr(itemToCheck, valuesArray){
     var itContains = false;
     for(i = 0; !itContains && i < valuesArray.length; i++){
@@ -164,7 +164,7 @@ function checkWin(inArray, newThing){
     return wins;
 }; 
 
-
+// Sees if the given player could win the given set if they placed at position newThing
 function checkCouldWin(inArray, newThing, playerNow = currPlayer){
     // a is row#, b is col#
     let rowStart = (Math.floor(newThing / ARRAYROWSIZE)) * 3;
@@ -201,7 +201,7 @@ function isCat(arrayToCheck){
     return done;
 };
 
-// calls to check for win or cat in subGame, if won calls to check for win
+// Calls to check for win or cat in subGame, if either happens calls to check for win
 function endTurn(currSubGame, positionIn){
     // check to see if the subGame is won
     var checkIsWin = checkWin(overAllArray[currSubGame], positionIn);
@@ -333,9 +333,9 @@ function aiTurn(){
         }
     }
     else{
-        // see if either player can win in the chosen one square, otherwise throw out random position
+        // see if ai can win in the chosen one square, otherwise throw out random position
         boxSelected = currBox;
-        sub = canLeadToWin(overAllArray[currBox], 'x');
+        let subArray = canLeadToWin(overAllArray[currBox], 'x');
 
         // if not 9, leave it there; if 9 pick something else
         if(sub == 9){
@@ -355,25 +355,31 @@ function aiTurn(){
     endTurn(boxSelected, sub);
 };
 
-// asking what, if anything, can lead to win looking at the chosen player in the array
+// Asking what, if anything, can lead to win looking at the chosen player in the array
+// Whatever spots are selected are in the array, otherwise the array just has 9
 function canLeadToWin(checkArray, playerHere){
     // loop through available spots in array to see if something gives a win for playerHere
-    var result = 9;
-    var winFound = false;
-    for(j = 0; !winFound && j < 9; j++){
+    var resultSet = [];
+    var resultSetAt = 0;
+    for(j = 0; j < 9; j++){
         // see if the position in the array being checked is even available
         var isUnavailable = checkArray[j].classList.contains("unavailableBox");
         isUnavailable ||= checkArray[j].classList.contains("unavailable");
         if(!isUnavailable){
-            winFound = checkCouldWin(checkArray, j, playerHere);
+            var winFound = checkCouldWin(checkArray, j, playerHere);
             if(winFound){
-                result = j;
+                result[resultSetAt] = j;
+                resultSetAt++;
             }
         }
     }
-    return result;
+    if(resultSetAt == 0){
+        resultSet[0] = 9;
+    }
+    return resultSet;
 };
 
+// Gives a random valid position in the given array
 function randomPosition(array){
     //get a valid position in the list
     var isOkay = false;
