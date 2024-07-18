@@ -327,7 +327,7 @@ function aiTurn(){
             //pick a spot at random, one hasn't already been picked by one person or another being able to win
             //generate a random array then generate a randomPosition, always generates a position that's available
             var random1 = randomPosition(subGames);
-            var random2 = randomPosition(overAllArray[randomOne]);
+            var random2 = randomPosition(overAllArray[random1]);
             boxSelected = random1;
             sub = random2;
         }
