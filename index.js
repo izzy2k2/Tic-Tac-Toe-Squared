@@ -127,16 +127,6 @@ function selectSub(clicked_box_pos){
     }
 };
 
-// Array contains a class check for multiple values
-function arrayContainsOr(arrayToCheck, valuesArray){
-    doesContain = false;
-    for(i = 0; !doesContain && i < arrayToCheck.length; i++){
-        for(j = 0; !doesContain && j < valuesArray.length; j++){
-            doesContain = arrayToCheck[i].classList.contains(valuesArray[j])
-        }
-    }
-};
-
 // Single item contains from array
 function singleContainsOr(itemToCheck, valuesArray){
     var itContains = false;
@@ -157,18 +147,18 @@ function checkWin(inArray, newThing){
     // use currPlayer to check who
     // needs to be checked as a 1d array, not 2d
     // check row
-    let wins = inArray[rowStart].classList.contains(playerNow) && inArray[rowStart + 1].classList.contains(playerNow) && inArray[rowStart + 2].classList.contains(playerNow);
+    let wins = inArray[rowStart].classList.contains(currPlayer) && inArray[rowStart + 1].classList.contains(currPlayer) && inArray[rowStart + 2].classList.contains(currPlayer);
 
     //check col
-    wins ||= (inArray[colStart].classList.contains(playerNow) && inArray[colStart + 3].classList.contains(playerNow) && inArray[colStart + 6].classList.contains(playerNow));
+    wins ||= (inArray[colStart].classList.contains(currPlayer) && inArray[colStart + 3].classList.contains(currPlayer) && inArray[colStart + 6].classList.contains(currPlayer));
 
     // On diagonal if true, only check if it's not already a win
     if(!wins && newThing % 2 == 0){
         // top left to bottom right diagonal, checked in the second part of check
-        wins = newThing % 4 == 0 && (inArray[0].classList.contains(playerNow) && inArray[4].classList.contains(playerNow) && inArray[8].classList.contains(playerNow));
+        wins = newThing % 4 == 0 && (inArray[0].classList.contains(currPlayer) && inArray[4].classList.contains(currPlayer) && inArray[8].classList.contains(currPlayer));
         
         // other diagonal, checked in the second part of check
-        wins ||= ((newThing == 2 || newThing == 4 || newThing == 6) && (inArray[2].classList.contains(playerNow) && inArray[4].contains(playerNow) && inArray[6].classList.contains(playerNow)));
+        wins ||= (newThing == 2 || newThing == 4 || newThing == 6) && (inArray[2].classList.contains(currPlayer) && inArray[4].classList.contains(currPlayer) && inArray[6].classList.contains(currPlayer));
     }
 
     return wins;
@@ -257,10 +247,10 @@ function endTurn(currSubGame, positionIn){
 // not starting it with the ability to tell if it can win the game in a few moves
 function aiTurn(){
     // start by looking at the square of choice- if 9, see what's available
-    // use checkWin to see if either player can win
+    // use checkCouldWin to see if either player can win
     // delegate that action to some other function(because of 9)
-    var boxSelected = 0;
-    var sub = 0;
+    var boxSelected = 9;
+    var sub = 9;
 
     // will pick out particular box using the id generated
     if(currBox == 9){
@@ -277,7 +267,6 @@ function aiTurn(){
                 // priority will pick randomly between the two, whichever random value gets picked in coinflip is chosen
                 var winPossibility =canLeadToWin(overAllArray[i], 'x');
                 var temp = canLeadToWin(overAllArray[i], 'o');
-                console.log("winPossibility: " + winPossibility + "  other win: " + temp)
                 if(winPossibility != 9){
                     // the value of winPossibility is the spot that will lead to a win
                     willWin = canLeadToWin(subGames, 'x') == i;
@@ -371,21 +360,17 @@ function canLeadToWin(checkArray, playerHere){
     // loop through available spots in array to see if something gives a win for playerHere
     var result = 9;
     var winFound = false;
-    for(i = 0; !winFound && i < 9; i++){
+    for(j = 0; !winFound && j < 9; j++){
         // see if the position in the array being checked is even available
-        var isUnavailable = checkArray[i].classList.contains("unavailableBox");
-        isUnavailable ||= checkArray[i].classList.contains("unavailable");
-        if(isUnavailable){
-            console.log(i + " is unavailable")
-        }
-        else{
-            winFound = checkCouldWin(checkArray, i, playerHere);
+        var isUnavailable = checkArray[j].classList.contains("unavailableBox");
+        isUnavailable ||= checkArray[j].classList.contains("unavailable");
+        if(!isUnavailable){
+            winFound = checkCouldWin(checkArray, j, playerHere);
             if(winFound){
-                result = i;
+                result = j;
             }
         }
     }
-    console.log("split")
     return result;
 };
 
