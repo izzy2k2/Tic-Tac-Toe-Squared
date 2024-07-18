@@ -337,8 +337,8 @@ function aiTurn(){
         boxSelected = currBox;
         let subArray = canLeadToWin(overAllArray[currBox], 'x');
 
-        // if not 9, leave it there; if 9 pick something else
-        if(sub == 9){
+        // if 9, can't win the box
+        if(subArray[0] == 9){
             //if something can lead to other player winning, block them
             sub = canLeadToWin(overAllArray[currBox], 'o');
 
@@ -346,6 +346,10 @@ function aiTurn(){
             if(sub == 9){
                 sub = randomPosition(overAllArray[currBox]);
             }
+        }
+        // look further into what that'll do
+        else{
+            // options
         }
     }
 
