@@ -335,6 +335,48 @@ function aiTurn(){
     else{
         // see if ai can win in the chosen one square, otherwise throw out random position
         boxSelected = currBox;
+        var canWinSub = canLeadToWin(overAllArray[currBox], 'x');
+
+        var canWinGame = checkCouldWin(subGames, currBox, 'x');
+
+        // see if winning this sub leads to a complete win, if true win game n choose that
+        if(canWinGame && canWinSub[0] != 9){
+            sub = canWinSub[0];
+        }
+        else{
+            // see where, if anywhere, opponent can win the game
+            var opponentCanWinGame = canLeadToWin(subGames,'o');
+
+            // opponent cannot win full game
+            if(opponentCanWinGame[0]!=9){
+                // for each of the spots in canWinSub, see if it'll send to user winning a box, if one is found use that
+                if(canWinSub[0] !=9){
+                    for(k=0; sub == 9 && k < canWinSub.length;k++){
+                        var tempArray = canLeadToWin(overAllArray[canWinSub[k]], 'o');
+                        if(tempArray[0] ==9){
+                            // user can't win the box, it's a successful selection
+                            sub=canWinSub[k];
+                        }
+                    }
+
+                    // if it must send to some spot where the user will win a box, just use a random win spot
+                    if(sub==9){
+                        sub=canWinSub[Math.floor(Math.random() * canWinSub.length)];
+                    }
+                } 
+                // if no spots can win the box, run through all available spots doing the same.
+                else{
+                    //
+                }
+            }
+
+            // opponent is capable of winning the full game, avoid sending them there if possible
+            else{
+                //
+            }
+        }
+/*
+        // see where, if anywhere, ai can win in chosen one square
         let subArray = canLeadToWin(overAllArray[currBox], 'x');
 
         // if 9, can't win the box
@@ -349,10 +391,10 @@ function aiTurn(){
         }
         // look further into what that'll do
         else{
-            // options
+            // go through the options
         }
+*/
     }
-
     overAllArray[boxSelected][sub].classList.add(currPlayer, 'unavailableBox');
 
     // end by ending turn
@@ -361,6 +403,7 @@ function aiTurn(){
 
 // Asking what, if anything, can lead to win looking at the chosen player in the array
 // Whatever spots are selected are in the array, otherwise the array just has 9
+// Spots are in order from low to high
 function canLeadToWin(checkArray, playerHere){
     // loop through available spots in array to see if something gives a win for playerHere
     var resultSet = [];
