@@ -351,20 +351,31 @@ function aiTurn(){
             if(opponentCanWinGame[0]!=9){
                 // for each of the spots in canWinSub, see if it'll send to user winning a box, if one is found use that
                 if(canWinSub[0] !=9){
+                    var lookAt = 9;
                     for(k=0; sub == 9 && k < canWinSub.length;k++){
-                        var tempArray = canLeadToWin(overAllArray[canWinSub[k]], 'o');
-                        if(tempArray[0] ==9){
-                            // user can't win the box, it's a successful selection
-                            sub=canWinSub[k];
+                        if(canWinSub[k]==boxSelected){
+                            sub=boxSelected;
+                        }
+                        else{
+                            var tempArray = canLeadToWin(overAllArray[canWinSub[k]], 'o');
+                            if(tempArray[0] ==9){
+                                // user can't win the box, it's a successful selection
+                                sub=canWinSub[k];
+                            }
                         }
                     }
 
                     // if it must send to some spot where the user will win a box, just use a random win spot
                     if(sub==9){
-                        sub=canWinSub[Math.floor(Math.random() * canWinSub.length)];
+                        if(lookAt == 9){
+                            sub=canWinSub[Math.floor(Math.random() * canWinSub.length)];
+                        }
+                        else{
+                            sub=lookAt;
+                        }
                     }
                 } 
-                // if no spots can win the box, run through all available spots doing the same.
+                // if no spots can win the box, run through all available spots to see if any will give user a win
                 else{
                     //
                 }
@@ -372,7 +383,7 @@ function aiTurn(){
 
             // opponent is capable of winning the full game, avoid sending them there if possible
             else{
-                //
+                var checkingAt = 0;
             }
         }
 /*
