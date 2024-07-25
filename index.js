@@ -353,8 +353,8 @@ function aiTurn(){
                 if(canWinSub[0] !=9){
                     var lookAt = 9;
                     for(k=0; sub == 9 && k < canWinSub.length;k++){
-                        if(canWinSub[k]==boxSelected){
-                            sub=boxSelected;
+                        if(canWinSub[k] == boxSelected){
+                            sub = boxSelected;
                         }
                         else{
                             var tempArray = canLeadToWin(overAllArray[canWinSub[k]], 'o');
@@ -378,6 +378,7 @@ function aiTurn(){
                 // if no spots can win the box for ai, run through all available spots to see if any will give user a sub win
                 else{
                     var choiceOptions = [];
+                    var k;
                     for(k == 0; k < 9; k++){
                         if(!overAllArray[boxSelected][k].classList.contains('unavailableBox')){
                             // available spot to place in
@@ -413,7 +414,7 @@ function aiTurn(){
                         }
                     }
                     if(selectionOptions.length > 0){
-                        sub = randomPosition(selectionOptions);
+                        sub = randomFromSafe(selectionOptions);
                         firstBranchNotSelected = false;
                     }
                 } 
@@ -430,25 +431,6 @@ function aiTurn(){
                 }
             }
         }
-/*
-        // see where, if anywhere, ai can win in chosen one square
-        let subArray = canLeadToWin(overAllArray[currBox], 'x');
-
-        // if 9, can't win the box
-        if(subArray[0] == 9){
-            //if something can lead to other player winning, block them
-            sub = canLeadToWin(overAllArray[currBox], 'o');
-
-            // otherwise, randomly select
-            if(sub == 9){
-                sub = randomPosition(overAllArray[currBox]);
-            }
-        }
-        // look further into what that'll do
-        else{
-            // go through the options
-        }
-*/
     }
     overAllArray[boxSelected][sub].classList.add(currPlayer, 'unavailableBox');
 
@@ -470,7 +452,7 @@ function canLeadToWin(checkArray, playerHere){
         if(!isUnavailable){
             var winFound = checkCouldWin(checkArray, j, playerHere);
             if(winFound){
-                result[resultSetAt] = j;
+                resultSet[resultSetAt] = j;
                 resultSetAt++;
             }
         }
@@ -480,6 +462,10 @@ function canLeadToWin(checkArray, playerHere){
     }
     return resultSet;
 };
+
+function randomFromSafe(safeArray){
+    return Math.floor(Math.random() * (safeArray.length + 1));
+}
 
 // Gives a random valid position in the given array
 function randomPosition(array){
