@@ -348,7 +348,7 @@ function aiTurn(){
             var opponentCanWinGame = canLeadToWin(subGames,'o');
 
             // opponent cannot win full game
-            if(opponentCanWinGame[0]!=9){
+            if(opponentCanWinGame[0]==9){
                 // for each of the spots in canWinSub, see if it'll send to user winning a box, if one is found use that
                 if(canWinSub[0] !=9){
                     var lookAt = 9;
@@ -375,15 +375,56 @@ function aiTurn(){
                         }
                     }
                 } 
-                // if no spots can win the box, run through all available spots to see if any will give user a win
+                // if no spots can win the box for ai, run through all available spots to see if any will give user a sub win
                 else{
-                    //
+                    var choiceOptions = [];
+                    for(k == 0; k < 9; k++){
+                        if(!overAllArray[boxSelected][k].classList.contains('unavailableBox')){
+                            // available spot to place in
+                            if(!subGames[k].classList.contains('unavailable')){
+                                // available spot to work with
+                                if(!opponentCanWinGame.includes(k)){
+                                    // can be placed here
+                                    choiceOptions.push(k);
+                                }
+                            }
+                        }
+                    }
+                    if(choiceOptions.length == 0){
+                        // choose any spot
+                        sub = randomPosition(overAllArray[boxSelected]);
+                    }
+                    else{
+                        // choose from choiceOptions
+                        sub = randomPosition(choiceOptions);
+                    }
                 }
             }
 
             // opponent is capable of winning the full game, avoid sending them there if possible
             else{
-                var checkingAt = 0;
+                firstBranchNotSelected = true;
+                if(canWinSub.length > 0){
+                    var selectionOptions = [];
+                    // see if there's a spot that'll let the ai win but user can't
+                    for(k = 0; k< canWinSub.length; k++){
+                        if(!opponentCanWinGame.includes(canWinSub[k]) && !subGames[canWinSub[k]].classList.contains('unavailable')){
+                            selectionOptions.push(canWinSub[k]);
+                        }
+                    }
+                    if(selectionOptions.length > 0){
+                        sub = randomPosition(selectionOptions);
+                        firstBranchNotSelected = false;
+                    }
+                } 
+                if(firstBranchNotSelected){
+                    // ai can't safely win the game
+                    var checkingAt = 0;
+                    var safeList = []
+                    for(k=0; k < 9; k++){
+                        // 
+                    }
+                }
             }
         }
 /*
@@ -443,7 +484,7 @@ function randomPosition(array){
     var isOkay = false;
     var randomness = 0;
     while(!isOkay){
-        randomness = Math.floor(Math.random() * 9);
+        randomness = Math.floor(Math.random() * (array.length + 1));
         if(!(array[randomness].classList.contains('unavailable') || array[randomness].classList.contains('unavailableBox'))){
             // the value is available
             isOkay = true;
