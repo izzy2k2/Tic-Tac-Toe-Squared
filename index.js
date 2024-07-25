@@ -418,11 +418,14 @@ function aiTurn(){
                     }
                 } 
                 if(firstBranchNotSelected){
-                    // ai can't safely win the game
+                    // ai can't safely win the game, check any other point
                     var checkingAt = 0;
                     var safeList = []
                     for(k=0; k < 9; k++){
-                        // 
+                        if(!boxSelected[k].classList.contains('unavailableBox') && !opponentCanWinGame.includes(k)){
+                            // box is unavailable, not in opponentCanWinGame
+                            // see about box being sent to 
+                        }
                     }
                 }
             }
