@@ -260,54 +260,8 @@ function aiTurn(){
         var enemyCanWin = false;
         // can pick from any available square, prioritize a square if it'll give the win
         for(i = 0; !willWin && i < 9; i++){
-            if(!subGames[i].classList.contains('unavailable')){   
-                // only look at games that haven't been won as options
-                // check for which one, if a particular square wins its box it gets a value of 1, 
-                // if it wins the game after winning immediately exit
-                // priority will pick randomly between the two, whichever random value gets picked in coinflip is chosen
-                var winPossibility =canLeadToWin(overAllArray[i], 'x');
-                var temp = canLeadToWin(overAllArray[i], 'o');
-                if(winPossibility != 9){
-                    // the value of winPossibility is the spot that will lead to a win
-                    willWin = canLeadToWin(subGames, 'x') == i;
-                    if(boxSelected == 9){
-                        boxSelected = i;
-                        sub = winPossibility;
-                    }
-                    else if (!willWin){
-                        // random selection between the options, 0 makes it the new one while 1 leaves it alone
-                        var selection = Math.floor(Math.random() * 2);
-                        if(selection == 0){
-                            boxSelected = i;
-                        }
-                    }
-                    if(willWin){
-                        boxSelected = i;
-                        sub = winPossibility;
-                    }
-                }
-                else if(!enemyCanWin && temp != 9){
-                    // there's something that can be done to fend off the enemy here
-                    enemyCanWin = canLeadToWin(subGames, 'o') == i;
-                    
-                    if(blockEnemySub == 9){
-                        // hasn't been triggered
-                        blockEnemySub = i;
-                        blockEnemy = temp;
-                    }
-                    else if (!enemyCanWin){
-                        // random selection between the options, 0 makes it the new one while 1 leaves it alone
-                        var selection = Math.floor(Math.random() * 2);
-                        if(selection == 0){
-                            blockEnemySub = i;
-                        }
-                    }
-                    if(enemyCanWin){
-                        // found a spot where the user can win the whole game, so that's locked in as the selected blocking location
-                        blockEnemySub = i;
-                        blockEnemy = temp;
-                    }
-                }
+            if(subGames[i].classList.contains('unavailable')){
+                aiIntelligenceAt(i);
             }
         }
 
@@ -333,104 +287,8 @@ function aiTurn(){
         }
     }
     else{
-        // see if ai can win in the chosen one square, otherwise throw out random position
         boxSelected = currBox;
-        var canWinSub = canLeadToWin(overAllArray[currBox], 'x');
-
-        var canWinGame = checkCouldWin(subGames, currBox, 'x');
-
-        // see if winning this sub leads to a complete win, if true win game n choose that
-        if(canWinGame && canWinSub[0] != 9){
-            sub = canWinSub[0];
-        }
-        else{
-            // see where, if anywhere, opponent can win the game
-            var opponentCanWinGame = canLeadToWin(subGames,'o');
-
-            // opponent cannot win full game
-            if(opponentCanWinGame[0]==9){
-                // for each of the spots in canWinSub, see if it'll send to user winning a box, if one is found use that
-                if(canWinSub[0] !=9){
-                    var lookAt = 9;
-                    for(k=0; sub == 9 && k < canWinSub.length;k++){
-                        if(canWinSub[k] == boxSelected){
-                            sub = boxSelected;
-                        }
-                        else{
-                            var tempArray = canLeadToWin(overAllArray[canWinSub[k]], 'o');
-                            if(tempArray[0] ==9){
-                                // user can't win the box, it's a successful selection
-                                sub=canWinSub[k];
-                            }
-                        }
-                    }
-
-                    // if it must send to some spot where the user will win a box, just use a random win spot
-                    if(sub==9){
-                        if(lookAt == 9){
-                            sub=canWinSub[Math.floor(Math.random() * canWinSub.length)];
-                        }
-                        else{
-                            sub=lookAt;
-                        }
-                    }
-                } 
-                // if no spots can win the box for ai, run through all available spots to see if any will give user a sub win
-                else{
-                    var choiceOptions = [];
-                    var k;
-                    for(k == 0; k < 9; k++){
-                        if(!overAllArray[boxSelected][k].classList.contains('unavailableBox')){
-                            // available spot to place in
-                            if(!subGames[k].classList.contains('unavailable')){
-                                // available spot to work with
-                                if(!opponentCanWinGame.includes(k)){
-                                    // can be placed here
-                                    choiceOptions.push(k);
-                                }
-                            }
-                        }
-                    }
-                    if(choiceOptions.length == 0){
-                        // choose any spot
-                        sub = randomPosition(overAllArray[boxSelected]);
-                    }
-                    else{
-                        // choose from choiceOptions
-                        sub = randomPosition(choiceOptions);
-                    }
-                }
-            }
-
-            // opponent is capable of winning the full game, avoid sending them there if possible
-            else{
-                firstBranchNotSelected = true;
-                if(canWinSub.length > 0){
-                    var selectionOptions = [];
-                    // see if there's a spot that'll let the ai win but user can't
-                    for(k = 0; k< canWinSub.length; k++){
-                        if(!opponentCanWinGame.includes(canWinSub[k]) && !subGames[canWinSub[k]].classList.contains('unavailable')){
-                            selectionOptions.push(canWinSub[k]);
-                        }
-                    }
-                    if(selectionOptions.length > 0){
-                        sub = randomFromSafe(selectionOptions);
-                        firstBranchNotSelected = false;
-                    }
-                } 
-                if(firstBranchNotSelected){
-                    // ai can't safely win the game, check any other point
-                    var checkingAt = 0;
-                    var safeList = []
-                    for(k=0; k < 9; k++){
-                        if(!boxSelected[k].classList.contains('unavailableBox') && !opponentCanWinGame.includes(k)){
-                            // box is unavailable, not in opponentCanWinGame
-                            // see about box being sent to 
-                        }
-                    }
-                }
-            }
-        }
+        aiIntelligenceAt(boxSelected);
     }
     overAllArray[boxSelected][sub].classList.add(currPlayer, 'unavailableBox');
 
@@ -444,7 +302,6 @@ function aiTurn(){
 function canLeadToWin(checkArray, playerHere){
     // loop through available spots in array to see if something gives a win for playerHere
     var resultSet = [];
-    var resultSetAt = 0;
     for(j = 0; j < 9; j++){
         // see if the position in the array being checked is even available
         var isUnavailable = checkArray[j].classList.contains("unavailableBox");
@@ -452,15 +309,161 @@ function canLeadToWin(checkArray, playerHere){
         if(!isUnavailable){
             var winFound = checkCouldWin(checkArray, j, playerHere);
             if(winFound){
-                resultSet[resultSetAt] = j;
-                resultSetAt++;
+                resultSet.push(j);
             }
         }
     }
-    if(resultSetAt == 0){
-        resultSet[0] = 9;
-    }
     return resultSet;
+};
+
+function aiIntelligenceAt(subGameNo){
+    // just move all the intelligence from ai at one spot into here
+    // see if ai can win in the chosen one square, otherwise throw out random position
+    boxSelected = subGameNo;
+    var valsCanWinSub = canLeadToWin(overAllArray[subGameNo], 'x');
+
+    var canWinGame = checkCouldWin(subGames, subGameNo, 'x');
+
+    // see if winning this sub leads to a complete win, if true win game n choose that
+    if(canWinGame && valsCanWinSub.length > 0){
+        sub = valsCanWinSub[0];
+    }
+    else{
+        // see where, if anywhere, opponent can win the game
+        var opponentCanWinGame = canLeadToWin(subGames,'o');
+
+        // opponent cannot win full game
+        if(opponentCanWinGame.length > 0){
+            // for each of the spots in valsCanWinSub, see if it'll send to user winning a box, if one is found use that
+            if(valsCanWinSub.length > 0){
+                var lookAt = 9;
+                for(k=0; sub == 9 && k < valsCanWinSub.length;k++){
+                    if(valsCanWinSub[k] == subGameNo){
+                        sub = subGameNo;
+                    }
+                    else{
+                        var tempArray = canLeadToWin(overAllArray[valsCanWinSub[k]], 'o');
+                        if(tempArray.length > 0){
+                            // user can't win the box, it's a successful selection
+                            sub=valsCanWinSub[k];
+                        }
+                    }
+                }
+
+                // if it must send to some spot where the user will win a box, just use a random win spot
+                if(sub==9){
+                    if(lookAt == 9){
+                        sub=valsCanWinSub[Math.floor(Math.random() * valsCanWinSub.length)];
+                    }
+                    else{
+                        sub=lookAt;
+                    }
+                }
+            } 
+            // if no spots can win the box for ai, run through all available spots to see if any will give user a sub win
+            else{
+                var choiceOptions = [];
+                for(k = 0; k < 9; k++){
+                    if(!(overAllArray[boxSelected][k].classList.contains('unavailableBox') || subGames[k].classList.contains('unavailable'))){
+                        // available spot to place in
+                        // available spot to work with
+                        if(!opponentCanWinGame.includes(k)){
+                            // can be placed here
+                            choiceOptions.push(k);
+                        }
+                    }
+                }
+                if(choiceOptions.length == 0){
+                    // choose any spot
+                    sub = randomPosition(overAllArray[boxSelected]);
+                }
+                else{
+                    // choose from choiceOptions
+                    sub = randomFromSafe(choiceOptions);
+                }
+            }
+        }
+
+        // opponent is capable of winning the full game, avoid sending them there if possible
+        else{
+            firstBranchNotSelected = true;
+            if(valsCanWinSub.length > 0){
+                var selectionOptions = [];
+                // see if there's a spot that'll let the ai win but user can't
+                for(k = 0; k< valsCanWinSub.length; k++){
+                    // why does subGames[valsCanWinSub[k]] seem to include 
+                    tempHere = valsCanWinSub[k];
+                    if(!opponentCanWinGame.includes(tempHere) && !subGames[tempHere].classList.contains('unavailable')){
+                        selectionOptions.push(valsCanWinSub[k]);
+                    }
+                }
+                if(selectionOptions.length > 0){
+                    sub = randomFromSafe(selectionOptions);
+                    firstBranchNotSelected = false;
+                }
+            } 
+            if(firstBranchNotSelected){
+                // ai can't safely win the subgame, check any other point
+                if(valsCanWinSub.length == 0){
+                    // ai cannot win the sub, compare available spots to where the user can win this subgame
+                    // since the user can win the full game, do NOT send to any subGame that's been won
+                    opponentvalsCanWinSub = canLeadToWin(overAllArray[boxSelected], 'o');
+                    if(opponentvalsCanWinSub.length == 0){
+                        // opponent cannot win this subGame, don't worry about comparing where they are in the box
+                    }
+
+                    else{
+                        // start by looking at where the user can win the subGame, see if safe block is possible
+                        tempArray = [];
+                        for(k = 0; k < opponentvalsCanWinSub.length; k++){
+                            tempHere = opponentvalsCanWinSub[k];
+                            if(!(opponentCanWinGame.includes(tempHere) ||subGames[tempHere].classList.contains('unavailable') || overAllArray[boxSelected][tempHere].classList.contains('unavailableBox'))){
+                                // safe spot to block enemy
+                                tempArray.push(tempHere);
+                            }
+                        }
+
+                        if(tempArray.length > 0){
+                            sub = randomFromSafe(tempArray);
+                        }
+                        else{
+                            // no safe spots to block enemy, try again from the list of things not in opponentvalsCanWinSub
+                            for(k = 0; k < 9;k++){
+                                if(!(opponentvalsCanWinSub.includes(k) || opponentCanWinGame.includes(k) ||subGames[tempHere].classList.contains('unavailable') || overAllArray[boxSelected][tempHere].classList.contains('unavailableBox'))){
+                                    // available, safe spot
+                                    // tempArray has length 0 at start of loop
+                                    tempArray.push(k);
+                                }
+                            }
+                        }
+
+                        if(tempArray.length > 0){
+                            // there is a spot that won't lead to the opponent winning the whole game, see if can 
+                        }
+                        else{
+                            //there are no safe spots available that disallow enemy win, just pick something available
+                            sub = randomPosition(overAllArray[boxSelected]);
+                        }
+                    }
+                    // if not in set where user can win game, check if it'll give some other sub to the user
+                    // if it can't avoid giving a subWin to the user, see if there are any that are available and not on the opponent win condition list
+                    // if it can't avoid giving the user a win, just go with the first one
+
+                    // if the subGame has nothing chosen, pick something random at the end, avoiding the opponent win state
+                }
+                else{
+                    var checkingAt = 0;
+                    var safeList = []
+                    for(k=0; k < 9; k++){
+                        if(!overAllArray[boxSelected][k].classList.contains('unavailableBox') && !opponentCanWinGame.includes(k)){
+                            // box is available and not in opponentCanWinGame
+                            // see about box being sent to
+                        }
+                    }
+                }
+            }
+        }
+    }
 };
 
 function randomFromSafe(safeArray){
