@@ -255,11 +255,6 @@ function aiTurn(){
     var aiWin = canLeadToWin(subGames, 'x')
     // will pick out particular box using the id generated
     if(currBox == 9){
-        var willWin = false;
-        var blockEnemySub = 9;
-        var blockEnemy = 9;
-        var enemyCanWin = false;
-        var tempArray = []
         // can pick from any available square, prioritize a square if it'll give the win
 
         // start by looking for spot that gives full game win
@@ -267,20 +262,45 @@ function aiTurn(){
         i = 0;
         while(i < aiWin.length && !willWin){
             // available spot
-            tempArray = canLeadToWin(overAllArray[i], 'x')
+            tempArray = canLeadToWin(overAllArray[aiWin[i]], 'x')
             if(tempArray.length > 0){
                 willWin = true;
             }
             i++;
         }
+
+        // ai can't win the full game
         if(tempArray.length == 0){
-            // ai can't win the full game
-            tempHere = [];
+            tempUpHere = [];
             for(i = 0; !willWin && i < 9; i++){
                 if(!subGames[i].classList.contains('unavailable')){
                     tempUpHere.push(aiIntelligenceAt(i));
                     // see if any spots are alright
                 }
+                else{
+                    tempUpHere.push(9);
+                }
+            }
+
+            // remove all '9's from the array
+            var unavailables = []
+            var notDone = true;
+            while(notDone){
+                var a = tempUpHere.indexOf(9)
+                if(a > -1){
+                    tempUpHere[a] = -1;
+                    unavailables.push(a);
+                }
+                else{
+                    notDone = false;
+                }
+            }
+
+            if(unavailables.length == 0){
+                // can place in any spot
+            }
+            else{
+                // re-roll if the value ends up being 9, have a value for sub and for 
             }
 
             // if you can win everything, take that. If enemy can win, steal that. If you can win the box, do so. If enemy can win box, steal. Else get random
@@ -304,13 +324,20 @@ function aiTurn(){
                 sub = random2;
             }
         }
+
+        // just win the game
         else{
             sub = tempArray[0];
         }
     }
     else{
         boxSelected = currBox;
-        aiIntelligenceAt(boxSelected);
+        sub = aiIntelligenceAt(boxSelected);
+        if(sub == 9){
+            // no safe place(not giving other player full game win or subgame win)
+            // see if there's a spot that avoids full game win
+            
+        }
     }
     overAllArray[boxSelected][sub].classList.add(currPlayer, 'unavailableBox');
 
@@ -346,9 +373,12 @@ function aiIntelligenceAt(subGameNo){
 
     var canWinGame = checkCouldWin(subGames, subGameNo, 'x');
 
+    var cannotBeSafe = false;
+    subHere = 9;
+
     // see if winning this sub leads to a complete win, if true win game n choose that
     if(canWinGame && valsCanWinSub.length > 0){
-        sub = valsCanWinSub[0];
+        subHere = valsCanWinSub[0];
     }
     else{
         // see where, if anywhere, opponent can win the game
@@ -359,26 +389,26 @@ function aiIntelligenceAt(subGameNo){
             // for each of the spots in valsCanWinSub, see if it'll send to user winning a box, if one is found use that
             if(valsCanWinSub.length > 0){
                 var lookAt = 9;
-                for(k=0; sub == 9 && k < valsCanWinSub.length;k++){
+                for(k=0; subHere == 9 && k < valsCanWinSub.length;k++){
                     if(valsCanWinSub[k] == subGameNo){
-                        sub = subGameNo;
+                        subHere = subGameNo;
                     }
                     else{
                         var tempArray = canLeadToWin(overAllArray[valsCanWinSub[k]], 'o');
                         if(tempArray.length > 0){
                             // user can't win the box, it's a successful selection
-                            sub=valsCanWinSub[k];
+                            subHere=valsCanWinSub[k];
                         }
                     }
                 }
 
                 // if it must send to some spot where the user will win a box, just use a random win spot
-                if(sub==9){
+                if(subHere==9){
                     if(lookAt == 9){
-                        sub=valsCanWinSub[Math.floor(Math.random() * valsCanWinSub.length)];
+                        subHere=valsCanWinSub[Math.floor(Math.random() * valsCanWinSub.length)];
                     }
                     else{
-                        sub=lookAt;
+                        subHere=lookAt;
                     }
                 }
             } 
@@ -397,11 +427,11 @@ function aiIntelligenceAt(subGameNo){
                 }
                 if(choiceOptions.length == 0){
                     // choose any spot
-                    sub = randomPosition(overAllArray[boxSelected]);
+                    subHere = randomPosition(overAllArray[boxSelected]);
                 }
                 else{
                     // choose from choiceOptions
-                    sub = randomFromSafe(choiceOptions);
+                    subHere = randomFromSafe(choiceOptions);
                 }
             }
         }
@@ -420,7 +450,7 @@ function aiIntelligenceAt(subGameNo){
                     }
                 }
                 if(selectionOptions.length > 0){
-                    sub = randomFromSafe(selectionOptions);
+                    subHere = randomFromSafe(selectionOptions);
                     firstBranchNotSelected = false;
                 }
             } 
@@ -446,7 +476,7 @@ function aiIntelligenceAt(subGameNo){
                         }
 
                         if(tempArray.length > 0){
-                            sub = randomFromSafe(tempArray);
+                            subHere = randomFromSafe(tempArray);
                         }
                         else{
                             // no safe spots to block enemy, try again from the list of things not in opponentvalsCanWinSub
@@ -464,7 +494,7 @@ function aiIntelligenceAt(subGameNo){
                         }
                         else{
                             //there are no safe spots available that disallow enemy win, just pick something available
-                            sub = randomPosition(overAllArray[boxSelected]);
+                            cannotBeSafe = true;
                         }
                     }
                     // if not in set where user can win game, check if it'll give some other sub to the user
@@ -487,6 +517,9 @@ function aiIntelligenceAt(subGameNo){
         }
     }
     // if nothing is safe, need to send a 9 to communicate that.
+    if(cannotBeSafe){
+
+    }
 };
 
 function randomFromSafe(safeArray){
