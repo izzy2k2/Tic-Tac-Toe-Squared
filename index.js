@@ -252,38 +252,60 @@ function aiTurn(){
     var boxSelected = 9;
     var sub = 9;
 
+    var aiWin = canLeadToWin(subGames, 'x')
     // will pick out particular box using the id generated
     if(currBox == 9){
         var willWin = false;
         var blockEnemySub = 9;
         var blockEnemy = 9;
         var enemyCanWin = false;
+        var tempArray = []
         // can pick from any available square, prioritize a square if it'll give the win
-        for(i = 0; !willWin && i < 9; i++){
-            if(subGames[i].classList.contains('unavailable')){
-                aiIntelligenceAt(i);
+
+        // start by looking for spot that gives full game win
+        // start by seeing if there's somewhere that can win the subGame, then see if that gives a full game win
+        i = 0;
+        while(i < aiWin.length && !willWin){
+            // available spot
+            tempArray = canLeadToWin(overAllArray[i], 'x')
+            if(tempArray.length > 0){
+                willWin = true;
+            }
+            i++;
+        }
+        if(tempArray.length == 0){
+            // ai can't win the full game
+            tempHere = [];
+            for(i = 0; !willWin && i < 9; i++){
+                if(!subGames[i].classList.contains('unavailable')){
+                    tempUpHere.push(aiIntelligenceAt(i));
+                    // see if any spots are alright
+                }
+            }
+
+            // if you can win everything, take that. If enemy can win, steal that. If you can win the box, do so. If enemy can win box, steal. Else get random
+
+            // willWin has already selected a spot if it will
+            if((!willWin && enemyCanWin) || (boxSelected == 9 && blockEnemy != 9)){
+                // you can't win the whole game, but you can keep an enemy away from it.
+                boxSelected = blockEnemySub;
+                sub = blockEnemy;
+            }
+            // if none of the above but the square can be won by the bot pick that(priority 1)
+            // if the square can't be won, choose to block the enemy, second option in previous if statement
+            
+            // if none of the above, pick something at random
+            else if(!willWin){
+                //pick a spot at random, one hasn't already been picked by one person or another being able to win
+                //generate a random array then generate a randomPosition, always generates a position that's available
+                var random1 = randomPosition(subGames);
+                var random2 = randomPosition(overAllArray[random1]);
+                boxSelected = random1;
+                sub = random2;
             }
         }
-
-        // if you can win everything, take that. If enemy can win, steal that. If you can win the box, do so. If enemy can win box, steal. Else get random
-
-        // willWin has already selected a spot if it will
-        if((!willWin && enemyCanWin) || (boxSelected == 9 && blockEnemy != 9)){
-            // you can't win the whole game, but you can keep an enemy away from it.
-            boxSelected = blockEnemySub;
-            sub = blockEnemy;
-        }
-        // if none of the above but the square can be won by the bot pick that(priority 1)
-        // if the square can't be won, choose to block the enemy, second option in previous if statement
-        
-        // if none of the above, pick something at random
-        else if(!willWin){
-            //pick a spot at random, one hasn't already been picked by one person or another being able to win
-            //generate a random array then generate a randomPosition, always generates a position that's available
-            var random1 = randomPosition(subGames);
-            var random2 = randomPosition(overAllArray[random1]);
-            boxSelected = random1;
-            sub = random2;
+        else{
+            sub = tempArray[0];
         }
     }
     else{
@@ -464,6 +486,7 @@ function aiIntelligenceAt(subGameNo){
             }
         }
     }
+    // if nothing is safe, need to send a 9 to communicate that.
 };
 
 function randomFromSafe(safeArray){
