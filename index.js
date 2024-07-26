@@ -336,7 +336,7 @@ function aiTurn(){
         if(sub == 9){
             // no safe place(not giving other player full game win or subgame win)
             // see if there's a spot that avoids full game win
-            
+
         }
     }
     overAllArray[boxSelected][sub].classList.add(currPlayer, 'unavailableBox');
@@ -368,7 +368,6 @@ function canLeadToWin(checkArray, playerHere){
 function aiIntelligenceAt(subGameNo){
     // just move all the intelligence from ai at one spot into here
     // see if ai can win in the chosen one square, otherwise throw out random position
-    boxSelected = subGameNo;
     var valsCanWinSub = canLeadToWin(overAllArray[subGameNo], 'x');
 
     var canWinGame = checkCouldWin(subGames, subGameNo, 'x');
@@ -416,7 +415,7 @@ function aiIntelligenceAt(subGameNo){
             else{
                 var choiceOptions = [];
                 for(k = 0; k < 9; k++){
-                    if(!(overAllArray[boxSelected][k].classList.contains('unavailableBox') || subGames[k].classList.contains('unavailable'))){
+                    if(!(overAllArray[subGameNo][k].classList.contains('unavailableBox') || subGames[k].classList.contains('unavailable'))){
                         // available spot to place in
                         // available spot to work with
                         if(!opponentCanWinGame.includes(k)){
@@ -427,7 +426,7 @@ function aiIntelligenceAt(subGameNo){
                 }
                 if(choiceOptions.length == 0){
                     // choose any spot
-                    subHere = randomPosition(overAllArray[boxSelected]);
+                    subHere = randomPosition(overAllArray[subGameNo]);
                 }
                 else{
                     // choose from choiceOptions
@@ -459,7 +458,7 @@ function aiIntelligenceAt(subGameNo){
                 if(valsCanWinSub.length == 0){
                     // ai cannot win the sub, compare available spots to where the user can win this subgame
                     // since the user can win the full game, do NOT send to any subGame that's been won
-                    opponentvalsCanWinSub = canLeadToWin(overAllArray[boxSelected], 'o');
+                    opponentvalsCanWinSub = canLeadToWin(overAllArray[subGameNo], 'o');
                     if(opponentvalsCanWinSub.length == 0){
                         // opponent cannot win this subGame, don't worry about comparing where they are in the box
                     }
@@ -469,7 +468,7 @@ function aiIntelligenceAt(subGameNo){
                         tempArray = [];
                         for(k = 0; k < opponentvalsCanWinSub.length; k++){
                             tempHere = opponentvalsCanWinSub[k];
-                            if(!(opponentCanWinGame.includes(tempHere) ||subGames[tempHere].classList.contains('unavailable') || overAllArray[boxSelected][tempHere].classList.contains('unavailableBox'))){
+                            if(!(opponentCanWinGame.includes(tempHere) ||subGames[tempHere].classList.contains('unavailable') || overAllArray[subGameNo][tempHere].classList.contains('unavailableBox'))){
                                 // safe spot to block enemy
                                 tempArray.push(tempHere);
                             }
@@ -481,7 +480,7 @@ function aiIntelligenceAt(subGameNo){
                         else{
                             // no safe spots to block enemy, try again from the list of things not in opponentvalsCanWinSub
                             for(k = 0; k < 9;k++){
-                                if(!(opponentvalsCanWinSub.includes(k) || opponentCanWinGame.includes(k) ||subGames[tempHere].classList.contains('unavailable') || overAllArray[boxSelected][tempHere].classList.contains('unavailableBox'))){
+                                if(!(opponentvalsCanWinSub.includes(k) || opponentCanWinGame.includes(k) ||subGames[tempHere].classList.contains('unavailable') || overAllArray[subGameNo][tempHere].classList.contains('unavailableBox'))){
                                     // available, safe spot
                                     // tempArray has length 0 at start of loop
                                     tempArray.push(k);
@@ -507,7 +506,7 @@ function aiIntelligenceAt(subGameNo){
                     var checkingAt = 0;
                     var safeList = []
                     for(k=0; k < 9; k++){
-                        if(!overAllArray[boxSelected][k].classList.contains('unavailableBox') && !opponentCanWinGame.includes(k)){
+                        if(!overAllArray[subGameNo][k].classList.contains('unavailableBox') && !opponentCanWinGame.includes(k)){
                             // box is available and not in opponentCanWinGame
                             // see about box being sent to
                         }
@@ -518,8 +517,9 @@ function aiIntelligenceAt(subGameNo){
     }
     // if nothing is safe, need to send a 9 to communicate that.
     if(cannotBeSafe){
-
+        subHere = 9;
     }
+    return subHere;
 };
 
 function randomFromSafe(safeArray){
