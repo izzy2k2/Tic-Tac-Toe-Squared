@@ -384,8 +384,8 @@ function aiIntelligenceAt(subGameNo){
         var opponentCanWinGame = canLeadToWin(subGames,'o');
 
         // opponent cannot win full game
-        if(opponentCanWinGame.length > 0){
-            // for each of the spots in valsCanWinSub, see if it'll send to user winning a box, if one is found use that
+        if(opponentCanWinGame.length == 0){
+            // for each of the spots in valsCanWinSub, see if it'll avoid sending to user winning a box, if one is found use that
             if(valsCanWinSub.length > 0){
                 var lookAt = 9;
                 for(k=0; subHere == 9 && k < valsCanWinSub.length;k++){
@@ -411,7 +411,7 @@ function aiIntelligenceAt(subGameNo){
                     }
                 }
             } 
-            // if no spots can win the box for ai, run through all available spots to see if any will give user a sub win
+            // if no spots can safely win the box for ai, run through all available spots to see if any will give user a sub win, avoid that
             else{
                 var choiceOptions = [];
                 for(k = 0; k < 9; k++){
