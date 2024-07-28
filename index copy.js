@@ -261,15 +261,21 @@ function aiTurn(){
             if(!subGames[i].classList.contains('unavailable')){
                 var temp = canLeadToWin(overAllArray[i], 'x')
                 if(temp.length > 0){
+                    boxSelected = i;
                     sub = temp[0];
                 }
             }
         }
         if(sub == 9){
-            winSet = [-1,-1,-1,-1,-1,-1,-1,-1];
-            var aiWinHere = canLeadToWin(overAllArray[i], 'x');
-            var winSet = aiIntelligenceAt(i, enemyGameWins, aiWinHere);
-            // then go to further availability
+            // game cannot be won, keep going
+            winSet = [];
+            for(i = 0; i < 9; i++){
+                var aiWinHere = canLeadToWin(overAllArray[i], 'x');
+                winSet[i] = aiIntelligenceAt(i, enemyGameWins, aiWinHere);
+            }
+            // using the new winSet, find the best choice
+
+            
         }
     }
     else{
@@ -325,7 +331,25 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, winSpots){
 
 function randomFromSafe(safeArray){
     return Math.floor(Math.random() * (safeArray.length + 1));
-}
+};
+
+// Returns the best value for the ai
+function selectValue(choices){
+    var currBestTier = 100;
+    var currBestVals = [];
+    for(l = 0; l < 9; l++){
+        var newTemp = Math.floor(choices[l]/9);
+        if(newTemp < currBestTier){
+            currBestVals = [choices[l] % 9];
+        }
+        else if(newTemp == currBestTier){
+            currBestVals.push(choices[l] % 9);
+        }
+    }
+
+    returner = randomPosition(currBestVals);
+    return returner;
+};
 
 // Gives a random valid position in the given array
 function randomPosition(array){
