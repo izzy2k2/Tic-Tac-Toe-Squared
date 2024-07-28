@@ -255,7 +255,7 @@ function aiTurn(){
 
     // will pick out particular box using the id generated
     if(currBox == 9){
-        var aiWin = canLeadToWin(subGames, 'x');
+        var aiWinHere = canLeadToWin(subGames, 'x');
         // loop to see about winning the game, if that can be fulfilled
         for(i = 0; sub == 9 && i < 9; i++){
             if(!subGames[i].classList.contains('unavailable')){
@@ -285,11 +285,14 @@ function aiTurn(){
         boxSelected = currBox;
         var canWinGame = checkCouldWin(subGames, currBox, 'x');
         var winsThisBox = canLeadToWin(overAllArray[currBox],'x');
+
+        // Can the full game be won?
         if(canWinGame && winsThisBox.length > 0){
             boxSelected = winsThisBox[0];
         }
         else{
             // send to the sub-function, with this information
+            sub = aiIntelligenceAt(boxSelected, enemyGameWins, []) % 9;
         }
     }
     overAllArray[boxSelected][sub].classList.add(currPlayer, 'unavailableBox');
