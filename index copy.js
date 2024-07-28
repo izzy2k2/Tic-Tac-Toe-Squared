@@ -341,6 +341,17 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots){
         // there are places we need to avoid
         if(userWinBoxes.length > 0){
             if(aiWinHere.length > 0){
+                // 
+            }
+            else{
+                //
+            }
+        }
+        else{
+            if(aiWinHere.length > 0){
+                // 
+            }
+            else{
                 //
             }
         }
