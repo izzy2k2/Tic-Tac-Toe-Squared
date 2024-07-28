@@ -275,7 +275,8 @@ function aiTurn(){
             }
             // using the new winSet, find the best choice
 
-            
+            possibleSubs = selectValue(winSet);
+            selection = Math.floor(Math.random() * (possibleSubs.length));
         }
     }
     else{
@@ -330,20 +331,20 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, winSpots){
 };
 
 function randomFromSafe(safeArray){
-    return Math.floor(Math.random() * (safeArray.length + 1));
+    return safeArray[Math.floor(Math.random() * (safeArray.length))];
 };
 
-// Returns the best value for the ai
+// Returns the best values for the ai, as a set of points as [sub, box]
 function selectValue(choices){
     var currBestTier = 100;
     var currBestVals = [];
     for(l = 0; l < 9; l++){
         var newTemp = Math.floor(choices[l]/9);
         if(newTemp < currBestTier){
-            currBestVals = [choices[l] % 9];
+            currBestVals = [[l,choices[l] % 9]];
         }
         else if(newTemp == currBestTier){
-            currBestVals.push(choices[l] % 9);
+            currBestVals.push([l,choices[l] % 9]);
         }
     }
 
@@ -357,7 +358,7 @@ function randomPosition(array){
     var isOkay = false;
     var randomness = 0;
     while(!isOkay){
-        randomness = Math.floor(Math.random() * (array.length + 1));
+        randomness = Math.floor(Math.random() * (array.length));
         if(!(array[randomness].classList.contains('unavailable') || array[randomness].classList.contains('unavailableBox'))){
             // the value is available
             isOkay = true;
