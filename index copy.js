@@ -277,6 +277,8 @@ function aiTurn(){
 
             possibleSubs = selectValue(winSet);
             selection = Math.floor(Math.random() * (possibleSubs.length));
+            boxSelected = possibleSubs[selection[0]];
+            sub = possibleSubs[selection[1]];
         }
     }
     else{
