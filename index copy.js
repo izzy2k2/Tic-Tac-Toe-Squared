@@ -270,8 +270,7 @@ function aiTurn(){
             // game cannot be won, keep going
             winSet = [];
             for(i = 0; i < 9; i++){
-                var aiWinHere = canLeadToWin(overAllArray[i], 'x');
-                winSet[i] = aiIntelligenceAt(i, enemyGameWins, aiWinHere);
+                winSet[i] = aiIntelligenceAt(i, enemyGameWins);
             }
             // using the new winSet, find the best choice
 
@@ -292,7 +291,7 @@ function aiTurn(){
         }
         else{
             // send to the sub-function, with this information
-            sub = aiIntelligenceAt(boxSelected, enemyGameWins, []) % 9;
+            sub = aiIntelligenceAt(boxSelected, enemyGameWins) % 9;
         }
     }
     overAllArray[boxSelected][sub].classList.add(currPlayer, 'unavailableBox');
@@ -321,15 +320,36 @@ function canLeadToWin(checkArray, playerHere){
     return resultSet;
 };
 
-function aiIntelligenceAt(subGameNo, enemyWinSpots, winSpots){
+// Delegation of enemy intelligence, 
+// Accepts the number of the subGame it's looking at, the places the enemy could win the whole game with
+function aiIntelligenceAt(subGameNo, enemyWinSpots){
     // just move all the intelligence from ai at one spot into here
     // see if ai can win in the chosen one square, otherwise throw out random position
 
+    var aiWinHere = canLeadToWin(overAllArray[subGameNo], 'x');
+    var subHere;
+
+    // loop through the boxes available to see what boxes the user can be sent to *and* win
+    var userWinBoxes = [];
+    for(z = 0; z < 9; z++){
+        if(canLeadToWin(overAllArray[z], 'o') > 0){
+            userWinBoxes.push(z);
+        }
+    }
+
     if(enemyWinSpots.length > 0){
         // there are places we need to avoid
+        if(userWinBoxes.length > 0){
+            if(aiWinHere.length > 0){
+                //
+            }
+        }
     }
     else{
         // don't need to look out for this
+        if(userWinBoxes.length > 0){
+            // 
+        }
     }
 
     return subHere;
