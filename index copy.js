@@ -341,19 +341,49 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
     // see if ai can win in the chosen one square, otherwise throw out random position
 
     var aiWinHere = canLeadToWin(overAllArray[subGameNo], 'x');
-    var subHere;
+    var subHere = 10;
 
     if(firstAttempt){
         // loop through the boxes available to see what boxes the user can be sent to *and* win
         var userWinBoxes = [];
         for(z = 0; z < 9; z++){
-            if(canLeadToWin(overAllArray[z], 'o') > 0){
+            if(canLeadToWin(overAllArray[z], 'o').length > 0){
                 userWinBoxes.push(z);
             }
         }
 
         if(enemyWinSpots.length > 0){
             // there are places we need to avoid
+            if(userWinBoxes.length > 0){
+                if(aiWinHere.length > 0){
+                    // can ai win box s.t. it doesn't give opponent a box?
+                }
+                else{
+                    availableSpots = getAllAvailable(subGameNo);
+                    safeSpots = limitFirstToExclude(availableSpots, userWinBoxes);
+                    if(safeSpots.length > 0){
+                        if(limitFirstToExclude(safeSpots,enemyWinSpots).length > 0){
+                            // pick at random from safeSpots but avoiding enemyWinSpots
+                        }
+                    }
+                    else{
+                        if(limitFirstToExclude(safeSpots,enemyWinSpots).length > 0){
+                            // pick something off of availableSpots + 9
+                        }
+                    }
+                }
+            }
+            else{
+                if(aiWinHere.length > 0){
+                    // take the box except if it leads to an enemyWinSpots
+                }
+                else{
+                    // pick something random that doesn't lead to unsafe spot + 9
+                }
+            }
+        }
+        else{
+            // don't need to look out for this, can copy previous section and remove enemyWinSpots section
             if(userWinBoxes.length > 0){
                 if(aiWinHere.length > 0){
                     // 
@@ -369,18 +399,11 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
                 else{
                     //
                 }
-            }
+            }        
         }
-        else{
-            // don't need to look out for this
-            if(userWinBoxes.length > 0){
-                // 
-            }
+        if(subHere = 10){
+            subHere = aiIntelligenceAt(subGameNo, enemyWinSpots, false) + 36;
         }
-        // logic for whether or not a good spot has been found
-        /*
-        subHere = aiIntelligenceAt(subGameNo, enemyWinSpots, false) + 36;
-        */
     }
     else{
         // ignore enemy win spots, already tried but can't find a good response without giving user subgame win
@@ -449,4 +472,14 @@ function randomPosition(array){
         }
     }
     return randomness;
+};
+
+function getAllAvailable(subGameChoice){
+    toReturn = [];
+    for(x = 0; x < 9;x++){
+        if(!overAllArray[subGameChoice][x].classList.includes('unavailableBox')){
+            toReturn.push(x);
+        }
+    }
+    return toReturn;
 };
