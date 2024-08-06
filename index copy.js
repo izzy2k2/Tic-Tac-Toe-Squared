@@ -384,22 +384,6 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
         }
         else{
             // don't need to look out for this, can copy previous section and remove enemyWinSpots section
-            if(userWinBoxes.length > 0){
-                if(aiWinHere.length > 0){
-                    // 
-                }
-                else{
-                    //
-                }
-            }
-            else{
-                if(aiWinHere.length > 0){
-                    // 
-                }
-                else{
-                    //
-                }
-            }        
         }
         if(subHere = 10){
             subHere = aiIntelligenceAt(subGameNo, enemyWinSpots, false) + 36;
