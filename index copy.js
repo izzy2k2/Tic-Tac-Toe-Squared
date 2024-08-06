@@ -320,25 +320,79 @@ function canLeadToWin(checkArray, playerHere){
     return resultSet;
 };
 
+function limitFirstToExclude(array1, array2){
+    var y = 0;
+    tempArray = array1.slice();
+    while(y < tempArray.length){
+        if(array2.includes(tempArray[y])){
+            tempArray.splice(y,1);
+        }
+        else{
+            y++;
+        }
+    }
+    return tempArray;
+};
+
 // Delegation of enemy intelligence, 
 // Accepts the number of the subGame it's looking at, the places the enemy could win the whole game with
-function aiIntelligenceAt(subGameNo, enemyWinSpots){
+function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
     // just move all the intelligence from ai at one spot into here
     // see if ai can win in the chosen one square, otherwise throw out random position
 
     var aiWinHere = canLeadToWin(overAllArray[subGameNo], 'x');
     var subHere;
 
-    // loop through the boxes available to see what boxes the user can be sent to *and* win
-    var userWinBoxes = [];
-    for(z = 0; z < 9; z++){
-        if(canLeadToWin(overAllArray[z], 'o') > 0){
-            userWinBoxes.push(z);
+    if(firstAttempt){
+        // loop through the boxes available to see what boxes the user can be sent to *and* win
+        var userWinBoxes = [];
+        for(z = 0; z < 9; z++){
+            if(canLeadToWin(overAllArray[z], 'o') > 0){
+                userWinBoxes.push(z);
+            }
         }
-    }
 
-    if(enemyWinSpots.length > 0){
-        // there are places we need to avoid
+        if(enemyWinSpots.length > 0){
+            // there are places we need to avoid
+            if(userWinBoxes.length > 0){
+                if(aiWinHere.length > 0){
+                    // 
+                }
+                else{
+                    //
+                }
+            }
+            else{
+                if(aiWinHere.length > 0){
+                    // 
+                }
+                else{
+                    //
+                }
+            }
+        }
+        else{
+            // don't need to look out for this
+            if(userWinBoxes.length > 0){
+                // 
+            }
+        }
+        // logic for whether or not a good spot has been found
+        /*
+        subHere = aiIntelligenceAt(subGameNo, enemyWinSpots, false) + 36;
+        */
+    }
+    else{
+        // ignore enemy win spots, already tried but can't find a good response without giving user subgame win
+        
+        // loop through the boxes available to see what boxes the user can be sent to *and* win
+        var userWinBoxes = [];
+        for(z = 0; z < 9; z++){
+            if(canLeadToWin(overAllArray[z], 'o') > 0){
+                userWinBoxes.push(z);
+            }
+        }
+
         if(userWinBoxes.length > 0){
             if(aiWinHere.length > 0){
                 // 
@@ -354,12 +408,6 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots){
             else{
                 //
             }
-        }
-    }
-    else{
-        // don't need to look out for this
-        if(userWinBoxes.length > 0){
-            // 
         }
     }
 
