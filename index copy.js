@@ -401,22 +401,37 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
                                     var rowPos = spotVal % 3;
                                     var colPos = (spotVal - rowPos) / 3;
                                     
-                                    var avoids2 = (subGames[rowPos].classList.contains('unavailable') && subGames[rowPos].classList.contains('x')) || (subGames[rowPos + 1].classList.contains('unavailable') && subGames[rowPos + 1].classList.contains('x')) || (subGames[rowPos + 2].classList.contains('unavailable') && subGames[rowPos + 2].classList.contains('x'));
-                                    avoids2 ||= (subGames[colPos].classList.contains('unavailable') && subGames[colPos].classList.contains('x')) || (subGames[colPos + 3].classList.contains('unavailable') && subGames[colPos].classList.contains('x')) || (subGames[colPos + 6].classList.contains('unavailable') && subGames[colPos].classList.contains('x'));
+                                    var gets2 = (subGames[rowPos].classList.contains('unavailable') && subGames[rowPos].classList.contains('x')) || (subGames[rowPos + 1].classList.contains('unavailable') && subGames[rowPos + 1].classList.contains('x')) || (subGames[rowPos + 2].classList.contains('unavailable') && subGames[rowPos + 2].classList.contains('x'));
+                                    gets2 ||= (subGames[colPos].classList.contains('unavailable') && subGames[colPos].classList.contains('x')) || (subGames[colPos + 3].classList.contains('unavailable') && subGames[colPos].classList.contains('x')) || (subGames[colPos + 6].classList.contains('unavailable') && subGames[colPos].classList.contains('x'));
                                     if(!avoids2 && spotVal % 2 == 0){
                                         if(spotVal == 2 || spotVal == 4 || spotVal == 6){
-                                            avoids2 = (subGames[2].classList.contains('unavailable') && subGames[2].classList.contains('x')) || (subGames[4].classList.contains('unavailable') && subGames[4].classList.contains('x')) || (subGames[6].classList.contains('unavailable') && subGames[6].classList.contains('x'));
+                                            gets2 = (subGames[2].classList.contains('unavailable') && subGames[2].classList.contains('x')) || (subGames[4].classList.contains('unavailable') && subGames[4].classList.contains('x')) || (subGames[6].classList.contains('unavailable') && subGames[6].classList.contains('x'));
                                         }
                                         if(spotVal % 4 == 0){
-                                            avoids2 ||= (subGames[0].classList.contains('unavailable') && subGames[0].classList.contains('x')) || (subGames[4].classList.contains('unavailable') && subGames[4].classList.contains('x')) || (subGames[8].classList.contains('unavailable') && subGames[8].classList.contains('x'));
+                                            gets2 ||= (subGames[0].classList.contains('unavailable') && subGames[0].classList.contains('x')) || (subGames[4].classList.contains('unavailable') && subGames[4].classList.contains('x')) || (subGames[8].classList.contains('unavailable') && subGames[8].classList.contains('x'));
                                         }
                                     }
                                     if(!avoids2){
                                         checkFor2.push(spotVal);
                                     }
                                 }
+
+                                if(checkFor2.length > 0){
+                                    subHere = randomFromSafe(checkFor2) + 18;
+                                }
+                                else{
                                     // Are there any spots that avoid sending to a spot where the user wins something? If so, do that
-                                        // take a winning position if all else fails
+                                    var relativelySafe = [];
+                                    for(z = 0; z < 9; z++){
+                                        if(!overAllArray[subGameNo][z].classList.contains('unavailableBox') && !enemyWinSpots.includes(z) && !userWinBoxes.includes(z) && !subGames[z].classList.contains('unavailable')){
+                                            relativelySafe.push(z);
+                                        }
+                                    }
+                                    if(relativelySafe.length > 0){
+                                        subHere = randomFromSafe(relativelySafe) + 9;
+                                    }
+                                    // on the second go round, take some box-winning position
+                                }
                             }
                         }
                     }
