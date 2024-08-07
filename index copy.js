@@ -356,24 +356,75 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
             // there are places we need to avoid
             if(userWinBoxes.length > 0){
                 var availableSpots = getAllAvailable(subGameNo);
-                var safeSpots = limitFirstToExclude(availableSpots, userWinBoxes);
-                safeSpots = limitFirstToExclude(safeSpots, enemyWinSpots);
+                var safeSpots = limitFirstToExclude(availableSpots, enemyWinSpots);
+                safeSpots2 = limitFirstToExclude(safeSpots, userWinBoxes);
                 if(aiWinHere.length > 0){
                     // can ai win box s.t. it doesn't give opponent a box? If so, take it
-                    if(safeSpots.length > 0){
+                    if(safeSpots2.length > 0){
                         subHere = randomFromSafe(safeSpots);
                     }    
-                    else{                        
-                        // if not, is this box the only 1 box it can win? If so, take it(only in the 'else' ver)
-                            // if not, will any win cases avoid giving 2 in a row to user? If so, take it
-                                // Will any win states give a 2 in a row to ai if selected? If so, take it
+                    else{     
+                        if(safeSpots.length > 0){                   
+                            // if not, is this box the only 1 box it can win? If so, take it(only in the 'else' ver)
+
+                            var checkFor2 = [];
+                            for(w = 0; w < safeSpots.length; w++){
+                                // checking safeSpots[w]
+                                var spotVal = safeSpots[w];
+                                var rowPos = spotVal % 3;
+                                var colPos = (spotVal - rowPos) / 3;
+                                
+                                var avoids2 = (subGames[rowPos].classList.contains('unavailable') && subGames[rowPos].classList.contains('o')) || (subGames[rowPos + 1].classList.contains('unavailable') && subGames[rowPos + 1].classList.contains('o')) || (subGames[rowPos + 2].classList.contains('unavailable') && subGames[rowPos + 2].classList.contains('o'));
+                                avoids2 ||= (subGames[colPos].classList.contains('unavailable') && subGames[colPos].classList.contains('o')) || (subGames[colPos + 3].classList.contains('unavailable') && subGames[colPos].classList.contains('o')) || (subGames[colPos + 6].classList.contains('unavailable') && subGames[colPos].classList.contains('o'));
+                                if(!avoids2 && spotVal % 2 == 0){
+                                    if(spotVal == 2 || spotVal == 4 || spotVal == 6){
+                                        avoids2 = (subGames[2].classList.contains('unavailable') && subGames[2].classList.contains('o')) || (subGames[4].classList.contains('unavailable') && subGames[4].classList.contains('o')) || (subGames[6].classList.contains('unavailable') && subGames[6].classList.contains('o'));
+                                    }
+                                    if(spotVal % 4 == 0){
+                                        avoids2 ||= (subGames[0].classList.contains('unavailable') && subGames[0].classList.contains('o')) || (subGames[4].classList.contains('unavailable') && subGames[4].classList.contains('o')) || (subGames[8].classList.contains('unavailable') && subGames[8].classList.contains('o'));
+                                    }
+                                }
+                                if(!avoids2){
+                                    checkFor2.push(spotVal);
+                                }
+                            }
+
+                            // will any win cases avoid giving 2 in a row to user? If so, take it
+                            if(checkFor2.length > 0){
+                                subHere = randomFromSafe(checkFor2) + 18;
+                            }
+                            else{
+                                // Will any win states give just a 2 in a row to ai if selected? If so, take it
+                                for(w = 0; w < safeSpots.length; w++){
+                                    // checking safeSpots[w]
+                                    var spotVal = safeSpots[w];
+                                    var rowPos = spotVal % 3;
+                                    var colPos = (spotVal - rowPos) / 3;
+                                    
+                                    var avoids2 = (subGames[rowPos].classList.contains('unavailable') && subGames[rowPos].classList.contains('o')) || (subGames[rowPos + 1].classList.contains('unavailable') && subGames[rowPos + 1].classList.contains('o')) || (subGames[rowPos + 2].classList.contains('unavailable') && subGames[rowPos + 2].classList.contains('o'));
+                                    avoids2 ||= (subGames[colPos].classList.contains('unavailable') && subGames[colPos].classList.contains('o')) || (subGames[colPos + 3].classList.contains('unavailable') && subGames[colPos].classList.contains('o')) || (subGames[colPos + 6].classList.contains('unavailable') && subGames[colPos].classList.contains('o'));
+                                    if(!avoids2 && spotVal % 2 == 0){
+                                        if(spotVal == 2 || spotVal == 4 || spotVal == 6){
+                                            avoids2 = (subGames[2].classList.contains('unavailable') && subGames[2].classList.contains('o')) || (subGames[4].classList.contains('unavailable') && subGames[4].classList.contains('o')) || (subGames[6].classList.contains('unavailable') && subGames[6].classList.contains('o'));
+                                        }
+                                        if(spotVal % 4 == 0){
+                                            avoids2 ||= (subGames[0].classList.contains('unavailable') && subGames[0].classList.contains('o')) || (subGames[4].classList.contains('unavailable') && subGames[4].classList.contains('o')) || (subGames[8].classList.contains('unavailable') && subGames[8].classList.contains('o'));
+                                        }
+                                    }
+                                    if(avoids2){
+                                        checkFor2.push(spotVal);
+                                    }
+                                }
                                     // Are there any spots that avoid sending to a spot where the user wins something? If so, do that
                                         // take a winning position if all else fails
+                            }
+                        }
                     }
                 }
                 else{
                     if(safeSpots.length > 0){
-                        if(limitFirstToExclude(safeSpots,enemyWinSpots).length > 0){
+                        limited = limitFirstToExclude(safeSpots,enemyWinSpots).length 
+                        if(limited > 0){
                             // pick at random from safeSpots but avoiding enemyWinSpots
                         }
                     }
