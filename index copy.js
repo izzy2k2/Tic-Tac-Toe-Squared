@@ -375,7 +375,7 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
             }
             else{
                 if(aiWinHere.length > 0){
-                    // take the box except if it leads to an enemyWinSpots
+                    // take the box except if it leads to an enemyWinSpots, then see if can do anything in box without giving player a win
                 }
                 else{
                     // pick something random that doesn't lead to unsafe spot + 9
@@ -383,7 +383,7 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
             }
         }
         else{
-            // don't need to look out for this, can copy previous section and remove enemyWinSpots section
+            // don't need to rewrite much for this, can copy previous section and remove enemyWinSpots section
         }
         if(subHere = 10){
             subHere = aiIntelligenceAt(subGameNo, enemyWinSpots, false) + 36;
