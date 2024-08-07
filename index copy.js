@@ -355,6 +355,8 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
         if(enemyWinSpots.length > 0){
             // there are places we need to avoid
             if(userWinBoxes.length > 0){
+                availableSpots = getAllAvailable(subGameNo);
+                safeSpots = limitFirstToExclude(availableSpots, userWinBoxes);
                 if(aiWinHere.length > 0){
                     // can ai win box s.t. it doesn't give opponent a box? If so, take it
                         // if not, is this box the only 1 box it can win? If so, take it(only in the 'else' ver)
@@ -364,8 +366,6 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
                                         // take a winning position if all else fails
                 }
                 else{
-                    availableSpots = getAllAvailable(subGameNo);
-                    safeSpots = limitFirstToExclude(availableSpots, userWinBoxes);
                     if(safeSpots.length > 0){
                         if(limitFirstToExclude(safeSpots,enemyWinSpots).length > 0){
                             // pick at random from safeSpots but avoiding enemyWinSpots
