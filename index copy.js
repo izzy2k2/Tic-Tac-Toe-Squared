@@ -347,7 +347,7 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
         // loop through the boxes available to see what boxes the user can be sent to *and* win
         var userWinBoxes = [];
         for(z = 0; z < 9; z++){
-            if(canLeadToWin(overAllArray[z], 'o').length > 0){
+            if(!subGames[z].classList.contains('unavailable') && canLeadToWin(overAllArray[z], 'o').length > 0){
                 userWinBoxes.push(z);
             }
         }
@@ -355,25 +355,26 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
         if(enemyWinSpots.length > 0){
             // there are places we need to avoid
             if(userWinBoxes.length > 0){
-                availableSpots = getAllAvailable(subGameNo);
-                safeSpots = limitFirstToExclude(availableSpots, userWinBoxes);
+                var availableSpots = getAllAvailable(subGameNo);
+                var safeSpots = limitFirstToExclude(availableSpots, userWinBoxes);
+                safeSpots = limitFirstToExclude(safeSpots, enemyWinSpots);
                 if(aiWinHere.length > 0){
                     // can ai win box s.t. it doesn't give opponent a box? If so, take it
+                    if(safeSpots.length > 0){
+                        subHere = randomFromSafe(safeSpots);
+                    }    
+                    else{                        
                         // if not, is this box the only 1 box it can win? If so, take it(only in the 'else' ver)
                             // if not, will any win cases avoid giving 2 in a row to user? If so, take it
                                 // Will any win states give a 2 in a row to ai if selected? If so, take it
                                     // Are there any spots that avoid sending to a spot where the user wins something? If so, do that
                                         // take a winning position if all else fails
+                    }
                 }
                 else{
                     if(safeSpots.length > 0){
                         if(limitFirstToExclude(safeSpots,enemyWinSpots).length > 0){
                             // pick at random from safeSpots but avoiding enemyWinSpots
-                        }
-                    }
-                    else{
-                        if(limitFirstToExclude(safeSpots,enemyWinSpots).length > 0){
-                            // pick something off of availableSpots + 9
                         }
                     }
                 }
@@ -466,7 +467,7 @@ function randomPosition(array){
 function getAllAvailable(subGameChoice){
     toReturn = [];
     for(x = 0; x < 9;x++){
-        if(!overAllArray[subGameChoice][x].classList.includes('unavailableBox')){
+        if(!overAllArray[subGameChoice][x].classList.contains('unavailableBox')){
             toReturn.push(x);
         }
     }
