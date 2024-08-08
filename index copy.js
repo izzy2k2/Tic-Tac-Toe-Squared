@@ -576,6 +576,10 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
                     }
                     else{
                         // see if can do anything in box without giving player a win
+                        var grouping = limitFirstToExclude(availableSpots, userWinBoxes);
+                        if(grouping.length > 0){
+                            //subHere goes here
+                        }
                     }
                 }
                 else{
