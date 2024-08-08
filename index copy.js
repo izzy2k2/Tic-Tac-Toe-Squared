@@ -341,7 +341,7 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
     // see if ai can win in the chosen one square, otherwise throw out random position
 
     var aiWinHere = canLeadToWin(overAllArray[subGameNo], 'x');
-    var subHere = 10;
+    var subHere = 100;
 
     if(firstAttempt){
         // loop through the boxes available to see what boxes the user can be sent to *and* win
@@ -438,9 +438,9 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
                 }
                 else{
                     if(safeSpots.length > 0){
-                        limited = limitFirstToExclude(safeSpots,enemyWinSpots).length 
-                        if(limited > 0){
-                            // pick at random from safeSpots but avoiding enemyWinSpots
+                        var limited = limitFirstToExclude(safeSpots,enemyWinSpots) 
+                        if(limited.length > 0){
+                            subHere = randomFromSafe(limited);
                         }
                     }
                 }
@@ -448,16 +448,24 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
             else{
                 if(aiWinHere.length > 0){
                     // take the box except if it leads to an enemyWinSpots, then see if can do anything in box without giving player a win
+                    var limited = limitFirstToExclude(aiWinHere, enemyWinSpots);
+                    if(limited.length > 0){
+                        subHere = randomFromSafe(limited);
+                    }
+                    else{
+                        //
+                    }
                 }
                 else{
                     // pick something random that doesn't lead to unsafe spot + 9
+                    subHere = randomFromSafe() + 9;
                 }
             }
         }
         else{
-            // don't need to rewrite much for this, can copy previous section and remove enemyWinSpots section
+            // don't need to rewrite much for this, can copy previous section and remove enemyWinSpots sections
         }
-        if(subHere = 10){
+        if(subHere == 100){
             subHere = aiIntelligenceAt(subGameNo, enemyWinSpots, false) + 36;
         }
     }
