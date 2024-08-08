@@ -600,25 +600,6 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
     }
     else{
         // ignore enemy win spots, if here it already tried but can't find a good response without giving user subgame win so ignore that as a check
-        
-        // loop through the boxes available to see what boxes the user can be sent to *and* win
-
-        if(userWinBoxes.length > 0){
-            if(aiWinHere.length > 0){
-                // 
-            }
-            else{
-                //
-            }
-        }
-        else{
-            if(aiWinHere.length > 0){
-                // 
-            }
-            else{
-                //
-            }
-        }
     }
 
     return subHere;
