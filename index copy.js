@@ -453,12 +453,27 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
                         subHere = randomFromSafe(limited);
                     }
                     else{
-                        //
+                        // can anything here avoid giving player a win?
                     }
                 }
                 else{
                     // pick something random that doesn't lead to unsafe spot + 9
-                    subHere = randomFromSafe() + 9;
+                    var limited = limitFirstToExclude(getAllAvailable(subGameNo), enemyWinSpots);
+                    // for all subGames, exclude any completed ones from limited
+                    limited = limitFirstToExclude(limited, userWinBoxes);
+                    var temp = 0;
+                    while(temp < limited.length){
+                        if(subGames[limited[temp]].classList.contains('unavailable')){
+                            limited.splice(temp, 1);
+                        }
+                        else{
+                            temp++;
+                        }
+                    }
+
+                    if(limited.length > 0){
+                        subHere = randomFromSafe(limited);
+                    }
                 }
             }
         }
@@ -470,7 +485,7 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
         }
     }
     else{
-        // ignore enemy win spots, already tried but can't find a good response without giving user subgame win
+        // ignore enemy win spots, if here it already tried but can't find a good response without giving user subgame win
         
         // loop through the boxes available to see what boxes the user can be sent to *and* win
         var userWinBoxes = [];
