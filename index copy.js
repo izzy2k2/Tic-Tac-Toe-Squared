@@ -569,9 +569,13 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
             }
             else{
                 if(aiWinHere.length > 0){
-                    // take the box except if it leads to an enemyWinSpots, then see if can do anything in box without giving player a win
-                    if(aiWinHere.length > 0){
+                    // take the box except if it leads to an enemyWinSpots
+                    limited = limitFirstToExclude(aiWinHere, enemyWinSpots);
+                    if(limited.length > 0){
                         subHere = randomFromSafe(limited);
+                    }
+                    else{
+                        // see if can do anything in box without giving player a win
                     }
                 }
                 else{
