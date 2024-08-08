@@ -342,15 +342,15 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
 
     var aiWinHere = canLeadToWin(overAllArray[subGameNo], 'x');
     var subHere = 100;
+    var userWinBoxes = [];
+    for(z = 0; z < 9; z++){
+        if(!subGames[z].classList.contains('unavailable') && canLeadToWin(overAllArray[z], 'o').length > 0){
+            userWinBoxes.push(z);
+        }
+    }
 
     if(firstAttempt){
         // loop through the boxes available to see what boxes the user can be sent to *and* win
-        var userWinBoxes = [];
-        for(z = 0; z < 9; z++){
-            if(!subGames[z].classList.contains('unavailable') && canLeadToWin(overAllArray[z], 'o').length > 0){
-                userWinBoxes.push(z);
-            }
-        }
 
         if(enemyWinSpots.length > 0){
             // there are places we need to avoid
@@ -602,12 +602,6 @@ function aiIntelligenceAt(subGameNo, enemyWinSpots, firstAttempt = true){
         // ignore enemy win spots, if here it already tried but can't find a good response without giving user subgame win so ignore that as a check
         
         // loop through the boxes available to see what boxes the user can be sent to *and* win
-        var userWinBoxes = [];
-        for(z = 0; z < 9; z++){
-            if(canLeadToWin(overAllArray[z], 'o') > 0){
-                userWinBoxes.push(z);
-            }
-        }
 
         if(userWinBoxes.length > 0){
             if(aiWinHere.length > 0){
